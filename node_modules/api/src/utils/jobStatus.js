@@ -1,0 +1,7 @@
+module.exports = {
+  CREATED: "CREATED",
+  PAID: "PAID",
+  PRINTING: "PRINTING",
+  PRINTED: "PRINTED",
+  FAILED: "FAILED"
+};

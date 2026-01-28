@@ -10,7 +10,33 @@ model Device {
   id         String   @id @default(uuid())
   shopName   String
   deviceName String
-  authToken  String   @unique
+  authToken  String
   isActive   Boolean  @default(true)
+
+  isOnline   Boolean  @default(false)
+  lastSeenAt DateTime?
+
   createdAt  DateTime @default(now())
+  printJobs  PrintJob[] 
+}
+
+model PrintJob {
+  id          String   @id @default(uuid())
+  deviceId    String
+  fileUrl     String
+  copies      Int
+  color       Boolean
+  status      JobStatus @default(CREATED)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  Device      Device   @relation(fields: [deviceId], references: [id])
+}
+
+enum JobStatus {
+  CREATED
+  PRINTING
+  PRINTED
+  FAILED
 }

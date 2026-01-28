@@ -2,29 +2,38 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { registerDevice } from "../../lib/api";
 import RegisterSuccessCard from "./RegisterSuccessCard";
 
 export default function RegisterDeviceForm() {
   const [shopName, setShopName] = useState("");
   const [deviceName, setDeviceName] = useState("");
+  const [loading, setLoading] = useState(false);
   const [successData, setSuccessData] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!shopName.trim() || !deviceName.trim()) {
-      toast.error("Please fill in all required fields");
+      toast.error("Please fill all fields");
       return;
     }
 
-    // 🔥 Mock backend response (replace later)
-    setSuccessData({
-      shopName,
-      deviceName,
-      deviceId: "69914013-55e9-4dc5-8efe-b23001163fd3",
-      authToken:
-        "***************************************",
-    });
+    try {
+      setLoading(true);
+
+      const data = await registerDevice({
+        shopName,
+        deviceName,
+      });
+
+      setSuccessData(data);
+      toast.success("Device registered successfully");
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (successData) {
@@ -33,7 +42,6 @@ export default function RegisterDeviceForm() {
 
   return (
     <div className="w-full max-w-2xl bg-white rounded-xl shadow-md px-10 py-8">
-
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-gray-900">
           Register New Device
@@ -51,12 +59,10 @@ export default function RegisterDeviceForm() {
           <input
             value={shopName}
             onChange={(e) => setShopName(e.target.value)}
-            placeholder="e.g. Campus Print Shop"
-            className="w-full border border-gray-300 rounded-md px-4 py-2.5 focus:ring-2 focus:ring-indigo-500"
+            placeholder="e.g. Campus Print Shop" 
+            className="w-full border rounded-md px-4 py-2.5"
           />
-          <p className="mt-1 text-xs text-gray-500">
-            This will be displayed to users when they scan the QR code
-          </p>
+          <p className="mt-1 text-xs text-gray-500"> This will be displayed to users when they scan the QR code </p>
         </div>
 
         <div>
@@ -67,18 +73,17 @@ export default function RegisterDeviceForm() {
             value={deviceName}
             onChange={(e) => setDeviceName(e.target.value)}
             placeholder="e.g. HP LaserJet Pro M404n"
-            className="w-full border border-gray-300 rounded-md px-4 py-2.5 focus:ring-2 focus:ring-indigo-500"
+            className="w-full border rounded-md px-4 py-2.5"
           />
-          <p className="mt-1 text-xs text-gray-500">
-            Internal identifier for your device
-          </p>
+          <p className="mt-1 text-xs text-gray-500"> Internal identifier for your device </p>
         </div>
 
         <button
           type="submit"
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-md"
+          disabled={loading}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-medium py-3 rounded-md"
         >
-          Register Device
+          {loading ? "Registering..." : "Register Device"}
         </button>
       </form>
     </div>

@@ -1,34 +1,31 @@
-import prisma from "../prisma.js";
+import jwt from "jsonwebtoken";
 
-export default async function agentAuth(req, res, next) {
+export default function agentAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Missing token" });
+  }
+
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader?.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "Missing token" });
-    }
-
     const token = authHeader.split(" ")[1];
 
-    const device = await prisma.device.findFirst({
-      where: {
-        authToken: token,
-        isActive: true,
-      },
-    });
+    const payload = jwt.verify(
+      token,
+      process.env.AGENT_JWT_SECRET
+    );
 
-    if (!device) {
-      return res.status(401).json({ error: "Invalid token" });
+    if (payload.type !== "print-agent") {
+      return res.status(401).json({ error: "Invalid agent token" });
     }
 
-    // 🔑 THIS LINE IS CRITICAL
     req.agent = {
-      deviceId: device.id,
+      deviceId: payload.deviceId,
     };
 
     next();
   } catch (err) {
-    console.error("Agent auth error:", err);
-    res.status(500).json({ error: "Authentication failed" });
+    console.error("Agent auth error:", err.message);
+    return res.status(401).json({ error: "Invalid or expired token" });
   }
 }

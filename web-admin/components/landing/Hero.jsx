@@ -1,3 +1,5 @@
+import { Download } from "lucide-react";
+
 export default function Hero() {
   return (
     <section className="bg-gradient-to-br from-[#0b0f2a] via-[#14184a] to-[#1f2366] text-white">
@@ -24,8 +26,9 @@ export default function Hero() {
 
             <a
               href="/download"
-              className="inline-flex items-center justify-center border border-white/30 hover:border-white text-white font-medium px-8 py-3 rounded-md transition"
+              className="inline-flex items-center justify-center border border-white/30 hover:border-white text-white font-medium px-8 py-3 rounded-md transition gap-2"
             >
+              <Download size={16} />
               Download Agent
             </a>
           </div>

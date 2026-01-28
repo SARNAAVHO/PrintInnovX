@@ -81,7 +81,7 @@ export default function RegisterDeviceForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-medium py-3 rounded-md"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-medium py-3 rounded-md cursor-pointer"
         >
           {loading ? "Registering..." : "Register Device"}
         </button>

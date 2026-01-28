@@ -114,7 +114,7 @@ export default function RegisterSuccessCard({ data }) {
               `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/qr/${data.deviceId}`
             )
           }
-          className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium"
+          className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium cursor-pointer"
         >
           <Download size={16} />
           Download QR Code

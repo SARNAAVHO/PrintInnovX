@@ -16,7 +16,7 @@ export default function RegisterPage() {
 
           <Link
             href="/"
-            className="border border-gray-300 px-4 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition"
+            className="border border-gray-300 px-4 py-2 rounded-md text-sm text-gray-700 hover:bg-orange-500 hover:text-white hover:border-none transition"
           >
             Back to Home
           </Link>

@@ -1,7 +1,7 @@
 import express from "express";
 import agentAuth from "../middleware/agentAuth.js";
 import {
-  createPrintJob,
+  createPaidPrintJob,
   getNextJobForDevice,
   updateJobStatus,
 } from "../services/jobService.js";
@@ -9,20 +9,22 @@ import {
 const router = express.Router();
 
 /**
- * USER → Create print job
+ * USER → Create PAID print job
  */
-router.post("/", async (req, res) => {
+router.post("/create-paid", async (req, res) => {
   try {
-    const job = await createPrintJob(req.body);
-    res.status(201).json(job);
+    // console.log("CREATE PAID JOB BODY:", req.body); // debug (remove later)
+
+    const result = await createPaidPrintJob(req.body);
+    res.json(result);
   } catch (err) {
-    console.error("Create job error:", err.message);
-    res.status(400).json({ error: "Failed to create job" });
+    console.error("Create paid job error:", err.message);
+    res.status(400).json({ error: err.message });
   }
 });
 
 /**
- * AGENT → Fetch next job
+ * AGENT → Fetch next PAID job
  */
 router.post("/next", agentAuth, async (req, res) => {
   try {
@@ -35,7 +37,7 @@ router.post("/next", agentAuth, async (req, res) => {
     res.json({ job });
   } catch (err) {
     console.error("Fetch job error:", err.message);
-    res.status(500).json({ error: "Failed to fetch job" });
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -49,7 +51,7 @@ router.patch("/:id/status", agentAuth, async (req, res) => {
     res.json(job);
   } catch (err) {
     console.error("Update job error:", err.message);
-    res.status(400).json({ error: "Failed to update job" });
+    res.status(400).json({ error: err.message });
   }
 });
 

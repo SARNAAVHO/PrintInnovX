@@ -1,4 +1,10 @@
-import { Download, Printer, Monitor, Terminal } from "lucide-react";
+import {
+  Download,
+  Printer,
+  Monitor,
+  Terminal,
+  CheckCircle2,
+} from "lucide-react";
 
 export default function DownloadPage() {
   return (
@@ -43,10 +49,22 @@ export default function DownloadPage() {
           </p>
 
           <ul className="space-y-3 text-sm text-gray-700 mb-8">
-            <li>✅ Automatic startup on boot</li>
-            <li>✅ System tray integration</li>
-            <li>✅ Native Windows printer support</li>
-            <li>✅ Silent background operation</li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 size={16} className="text-green-600" />
+              Automatic startup on boot
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 size={16} className="text-green-600" />
+              System tray integration
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 size={16} className="text-green-600" />
+              Native Windows printer support
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 size={16} className="text-green-600" />
+              Silent background operation
+            </li>
           </ul>
 
           <a
@@ -70,10 +88,22 @@ export default function DownloadPage() {
           </p>
 
           <ul className="space-y-3 text-sm text-gray-700 mb-8">
-            <li>✅ Systemd service integration</li>
-            <li>✅ CUPS printer support</li>
-            <li>✅ Low resource footprint</li>
-            <li>✅ Perfect for Raspberry Pi</li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 size={16} className="text-green-600" />
+              Systemd service integration
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 size={16} className="text-green-600" />
+              CUPS printer support
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 size={16} className="text-green-600" />
+              Low resource footprint
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 size={16} className="text-green-600" />
+              Perfect for Raspberry Pi
+            </li>
           </ul>
 
           <a
@@ -100,7 +130,12 @@ export default function DownloadPage() {
             </h3>
 
             <ol className="list-decimal ml-6 text-sm text-gray-700 space-y-2">
-              <li>Download and run <code className="bg-gray-100 px-2 py-1 rounded">printcloud-agent-windows.exe</code></li>
+              <li>
+                Download and run{" "}
+                <code className="bg-gray-100 px-2 py-1 rounded">
+                  printcloud-agent-windows.exe
+                </code>
+              </li>
               <li>Follow the installation wizard</li>
               <li>Enter your Device ID and Authentication Token</li>
               <li>Agent starts automatically in background</li>

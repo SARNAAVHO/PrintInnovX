@@ -1,4 +1,5 @@
 import { Printer } from "lucide-react";
+import Link from "next/link";
 
 export default function TopBar() {
   return (
@@ -8,6 +9,12 @@ export default function TopBar() {
           <Printer className="text-indigo-600" />
           PrintInnovX Admin
         </div>
+        <Link
+            href="/"
+            className="border border-gray-300 px-4 py-2 rounded-md text-sm text-gray-700 hover:bg-orange-500 hover:text-white hover:border-none transition"
+          >
+            Back to Home
+          </Link>
       </div>
     </header>
   );

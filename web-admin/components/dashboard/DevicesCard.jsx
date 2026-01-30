@@ -2,7 +2,7 @@ import DeviceItem from "./DeviceItem";
 
 export default function DevicesCard() {
   return (
-    <div className="bg-white rounded-xl border p-6">
+    <div className="bg-white rounded-2xl shadow-sm p-6">
       <h2 className="font-semibold mb-4">Registered Devices</h2>
 
       <div className="space-y-4">

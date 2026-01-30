@@ -3,9 +3,9 @@ import Link from "next/link";
 
 export default function TopBar() {
   return (
-    <header className="bg-white border-gray-50">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <div className="flex items-center gap-2 font-semibold text-lg">
+    <header className="bg-white/80 backdrop-blur sticky top-0 z-10">
+      <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
+        <div className="flex items-center gap-2 font-semibold text-lg cursor-pointer">
           <Printer className="text-indigo-600" />
           PrintInnovX Admin
         </div>

@@ -1,9 +1,9 @@
 export default function JobsCard() {
   return (
-    <div className="bg-white rounded-xl border p-6">
+    <div className="bg-white rounded-2xl shadow-sm p-6">
       <h2 className="font-semibold mb-4">Recent Jobs</h2>
 
-      <div className="border rounded-lg p-4 flex justify-between items-center">
+      <div className="flex justify-between items-center p-4 rounded-xl hover:bg-slate-50 transition cursor-pointer">
         <div>
           <p className="font-medium">test_document.pdf</p>
           <p className="text-sm text-slate-500">
@@ -16,7 +16,7 @@ export default function JobsCard() {
 
         <div className="text-right">
           <p className="font-semibold">₹2.00</p>
-          <span className="mt-2 inline-block px-3 py-1 text-xs rounded bg-slate-100">
+          <span className="mt-2 inline-block px-3 py-1 text-xs rounded-full bg-indigo-100 text-indigo-700">
             CREATED
           </span>
         </div>

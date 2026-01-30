@@ -1,6 +1,6 @@
 export default function StatCard({ title, value, icon }) {
   return (
-    <div className="bg-white rounded-xl p-6 border flex items-center justify-between">
+    <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition cursor-pointer flex items-center justify-between">
       <div>
         <p className="text-sm text-slate-500">{title}</p>
         <p className="text-3xl font-semibold mt-1">{value}</p>

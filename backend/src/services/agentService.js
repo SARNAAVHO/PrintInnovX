@@ -37,3 +37,26 @@ export async function authenticateAgent(deviceId, authToken) {
     deviceName: device.deviceName,
   };
 }
+
+export async function registerAgent(deviceId) {
+
+  const device = await prisma.device.findUnique({
+    where: { id: deviceId }
+  });
+
+  if (!device) {
+    throw new Error("Device not found");
+  }
+
+  const token = jwt.sign(
+    { deviceId: device.id },
+    process.env.AGENT_JWT_SECRET,
+    { expiresIn: "30d" }
+  );
+
+  return {
+    deviceId: device.id,
+    token
+  };
+}
+

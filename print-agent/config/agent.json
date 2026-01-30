@@ -1,0 +1,7 @@
+{
+  "backendUrl": "http://localhost:4000",
+  "printerName": "SP Printer1",
+  "pollIntervalMs": 5000,
+  "deviceId": "0159e169-a5c9-4aac-aa40-293f29026c95",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6IjAxNTllMTY5LWE1YzktNGFhYy1hYTQwLTI5M2YyOTAyNmM5NSIsInR5cGUiOiJwcmludC1hZ2VudCIsImlhdCI6MTc2OTc4NDU2NCwiZXhwIjoxNzY5ODI3NzY0fQ.Ml-72qDJ60zzoET8cbdgXltbDtwE6JkPhIx4WzXlY5s"
+}

@@ -1,12 +1,17 @@
-import { heartbeat } from "../api.js";
+import { sendHeartbeat } from "../api/client.js";
+import fs from "fs";
+import path from "path";
 
-export function startHeartbeat(config) {
+const CONFIG_PATH = path.resolve("config/agent.json");
+
+export function startHeartbeat() {
   setInterval(async () => {
     try {
-      await heartbeat(config.authToken);
+      const config = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8"));
+      await sendHeartbeat(config.token);
       console.log("💓 Heartbeat sent");
-    } catch {
-      console.error("⚠️ Heartbeat failed");
+    } catch (e) {
+      console.error("Heartbeat failed:", e.message);
     }
-  }, 10_000);
+  }, 30000);
 }

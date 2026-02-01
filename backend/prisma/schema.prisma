@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Device {
@@ -45,4 +46,14 @@ enum JobStatus {
   PRINTING
   PRINTED
   FAILED
+}
+
+model Admin {
+  id          String   @id @default(uuid())
+  clerkUserId String   @unique
+  email       String
+  role        String   @default("ADMIN")
+
+  createdAt   DateTime @default(now())
+  lastLoginAt DateTime?
 }

@@ -1,29 +1,47 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import DeviceItem from "./DeviceItem";
+import { fetchAdminDevices } from "@/lib/api";
 
 export default function DevicesCard() {
+  const { getToken } = useAuth();
+  const [devices, setDevices] = useState([]);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const token = await getToken();
+        const data = await fetchAdminDevices(token);
+        setDevices(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    load();
+  }, [getToken]);
+
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6">
       <h2 className="font-semibold mb-4">Registered Devices</h2>
 
       <div className="space-y-4">
-        <DeviceItem
-          name="Test Shop 050205"
-          printer="Test Printer 050205"
-          status="online"
-          lastSeen="1/26/2026, 10:32:05 AM"
-        />
+        {devices.length === 0 && (
+          <p className="text-slate-400">No devices found</p>
+        )}
 
-        <DeviceItem
-          name="Test Shop Playwright"
-          printer="Test Printer Playwright"
-          status="offline"
-        />
-
-        <DeviceItem
-          name="Campus Printing Shop"
-          printer="Campus Printer"
-          status="offline"
-        />
+        {devices.map(device => (
+          <DeviceItem
+            key={device.id}
+            id={device.id}
+            name={device.shopName}
+            printer={device.printerName}
+            status={device.status}
+            lastSeen={device.lastSeen}
+          />
+        ))}
       </div>
     </div>
   );

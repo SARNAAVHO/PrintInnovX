@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Toaster } from "sonner";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata = {
   title: "PrintInnovX",
@@ -9,10 +10,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-white text-gray-900">
-        <Toaster richColors position="top-center" />
-        {children}
-        
+      <body>
+        <ClerkProvider
+          signInUrl="/admin-login"
+          signUpUrl="/admin-login"
+          fallbackRedirectUrl="/admin"
+        >
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );

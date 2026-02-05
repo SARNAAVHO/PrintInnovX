@@ -1,7 +1,7 @@
 {
   "backendUrl": "http://localhost:4000",
-  "printerName": "SP Printer1",
+  "printerName": "SP Printer2",
   "pollIntervalMs": 5000,
-  "deviceId": "0159e169-a5c9-4aac-aa40-293f29026c95",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6IjAxNTllMTY5LWE1YzktNGFhYy1hYTQwLTI5M2YyOTAyNmM5NSIsInR5cGUiOiJwcmludC1hZ2VudCIsImlhdCI6MTc2OTc4NDU2NCwiZXhwIjoxNzY5ODI3NzY0fQ.Ml-72qDJ60zzoET8cbdgXltbDtwE6JkPhIx4WzXlY5s"
+  "deviceId": "c7f2c4e8-cd8b-4c33-bad5-7069c97ecf9f",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6ImM3ZjJjNGU4LWNkOGItNGMzMy1iYWQ1LTcwNjljOTdlY2Y5ZiIsInR5cGUiOiJwcmludC1hZ2VudCIsImlhdCI6MTc3MDI2NDkxOCwiZXhwIjoxNzcwMzA4MTE4fQ.Xfh_a_4FnFcxj_sbBVzVycx_W6euElU74B8wwI5H-_I"
 }

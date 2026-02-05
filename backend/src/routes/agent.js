@@ -1,5 +1,5 @@
 import express from "express";
-import { authenticateAgent } from "../services/agentService.js";
+import { authenticateAgent, registerAgent } from "../services/agentService.js";
 
 const router = express.Router();
 

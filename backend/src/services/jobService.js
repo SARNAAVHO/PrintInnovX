@@ -5,36 +5,41 @@ import razorpay from "../utils/razorpay.js";
  * USER → Create PAID print job
  */
 export async function createPaidPrintJob(data) {
-  // 🔒 HARD VALIDATION
   if (!data) {
     throw new Error("Request body missing");
   }
 
-  const { deviceId, fileUrl, copies = 1, color = false } = data;
+  const {
+    deviceId,
+    fileId,
+    copies = 1,
+    totalPages,
+    color = false,
+  } = data;
 
-  if (!deviceId) {
-    throw new Error("deviceId is required");
+  if (!deviceId) throw new Error("deviceId is required");
+  if (!fileId) throw new Error("fileId is required");
+
+  if (!Number.isInteger(totalPages) || totalPages <= 0) {
+    throw new Error("totalPages must be a positive integer");
   }
 
-  if (!fileUrl) {
-    throw new Error("fileUrl is required");
-  }
-
-  if (copies <= 0) {
+  if (!Number.isInteger(copies) || copies <= 0) {
     throw new Error("copies must be greater than 0");
   }
 
-  // 💰 Pricing logic (simple, extend later)
+  // 💰 FINAL pricing logic (authoritative)
   const pricePerPage = color ? 10 : 5; // INR
-  const amount = pricePerPage * copies * 100; // paise
+  const amount = pricePerPage * totalPages * copies * 100; // paise
 
-  // 1️⃣ Create job (unpaid)
+  // 1️⃣ Create job
   const job = await prisma.printJob.create({
     data: {
       deviceId,
-      fileUrl,
+      fileId,
       copies,
       color,
+      totalPages,               // ✅ STORE THIS
       amount,
       status: "CREATED",
     },
@@ -47,12 +52,10 @@ export async function createPaidPrintJob(data) {
     receipt: job.id,
   });
 
-  // 3️⃣ Save Razorpay order ID
+  // 3️⃣ Save order ID
   await prisma.printJob.update({
     where: { id: job.id },
-    data: {
-      razorpayOrderId: order.id,
-    },
+    data: { razorpayOrderId: order.id },
   });
 
   return {

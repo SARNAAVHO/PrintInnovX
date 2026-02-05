@@ -10,8 +10,10 @@ import {
   Plus
 } from "lucide-react";
 import { PDFDocument } from "pdf-lib";
+import { uploadFile } from "../../lib/upload";
+import { apiFetch } from "../../lib/api";
 
-export default function PrintUI({ printer }) {
+export default function PrintUI({ printer, deviceId }) {
   const fileInputRef = useRef(null);
 
   const [files, setFiles] = useState([]); // [{ file, pages }]
@@ -20,6 +22,16 @@ export default function PrintUI({ printer }) {
   const [pageMode, setPageMode] = useState("all"); // all | range
   const [startPage, setStartPage] = useState(1);
   const [endPage, setEndPage] = useState(1);
+
+  function loadRazorpay() {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
 
   // ===== File selection =====
   async function handleSelect(e) {
@@ -77,24 +89,52 @@ export default function PrintUI({ printer }) {
   const ratePerPage = colorMode === "color" ? 10 : 5;
   const totalPrice = totalPages * copies * ratePerPage;
 
-  function handlePrint() {
-    const payload = {
-      files: files.map((f) => ({
-        name: f.file.name,
-        pages: f.pages,
-      })),
-      copies,
-      colorMode,
-      pageMode,
-      startPage: pageMode === "range" ? startPage : 1,
-      endPage: pageMode === "range" ? endPage : null,
-      totalPages,
-      totalPrice,
+  async function handlePrint() {
+    if (!files.length) return;
+
+    // 1️⃣ Upload to RAM
+    const { fileId } = await uploadFile(files[0].file);
+
+    // 2️⃣ Create job
+    const job = await apiFetch("/api/jobs/create-paid", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        deviceId,
+        fileId,
+        copies,
+        totalPages,
+        color: colorMode === "color",
+      }),
+    });
+
+    // 3️⃣ Load Razorpay
+    const loaded = await loadRazorpay();
+    if (!loaded) {
+      alert("Razorpay SDK failed to load");
+      return;
+    }
+
+    // 4️⃣ Open Razorpay Checkout
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: job.amount,
+      currency: job.currency,
+      name: "PrintInnovX",
+      description: "Print Job Payment",
+      order_id: job.razorpayOrderId,
+      handler: function (response) {
+        console.log("PAYMENT SUCCESS", response);
+        alert("Payment successful! Printing will start shortly.");
+      },
+      theme: {
+        color: "#000000",
+      },
     };
 
-    console.log("PRINT PAYLOAD:", payload);
-    alert(`Total price: ₹${totalPrice}`);
-  }
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+}
 
   return (
     <main className="min-h-screen bg-[#f2f2f7] flex flex-col">

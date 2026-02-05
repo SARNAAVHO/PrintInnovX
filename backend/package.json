@@ -23,6 +23,7 @@
     "express": "^5.2.1",
     "fastify": "^5.7.2",
     "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
     "pg": "^8.17.2",
     "qrcode": "^1.5.4",
     "razorpay": "^2.9.6",

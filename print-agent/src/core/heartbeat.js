@@ -8,7 +8,7 @@ export function startHeartbeat() {
   setInterval(async () => {
     try {
       const config = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8"));
-      await sendHeartbeat(config.token);
+      await sendHeartbeat(config.agentToken);
       console.log("💓 Heartbeat sent");
     } catch (e) {
       console.error("Heartbeat failed:", e.message);

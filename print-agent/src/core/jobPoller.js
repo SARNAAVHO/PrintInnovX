@@ -39,7 +39,7 @@ async function pollOnce() {
 
     console.log("🖨️ New job received:", job.id);
 
-    const filePath = await downloadFile(job.fileUrl, job.id);
+    const filePath = await downloadJobFile(job.id);
 
     const printer = getPrinter();
 
@@ -58,7 +58,7 @@ async function pollOnce() {
   } catch (err) {
     console.error("❌ Job processing failed:", err.message);
 
-    if (job?.id) {
+    if (job?.id) { 
       try {
         await apiRequest(
           `/api/jobs/${job.id}/status`,
@@ -74,15 +74,26 @@ async function pollOnce() {
   }
 }
 
-async function downloadFile(fileUrl, jobId) {
-  const res = await fetch(fileUrl);
+async function downloadJobFile(jobId) {
+  const token = getToken();
+
+  const res = await fetch(
+    `http://localhost:4000/api/jobs/${jobId}/file`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 
   if (!res.ok) {
-    throw new Error("Failed to download file");
+    const text = await res.text();
+    throw new Error("Failed to download job file: " + text);
   }
 
-  const ext =
-    path.extname(new URL(fileUrl).pathname) || ".pdf";
+  const contentType = res.headers.get("content-type") || "application/pdf";
+  const ext = contentType.includes("pdf") ? ".pdf" : "";
 
   const filePath = path.join(DOWNLOAD_DIR, `${jobId}${ext}`);
 
@@ -91,6 +102,7 @@ async function downloadFile(fileUrl, jobId) {
 
   return filePath;
 }
+
 
 function getToken() {
   const configPath = path.resolve("config/agent.json");

@@ -8,3 +8,6 @@ yarn-error.log*
 dist/
 out/
 build/
+
+# Env files
+.env

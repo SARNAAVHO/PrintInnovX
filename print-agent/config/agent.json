@@ -2,6 +2,11 @@
   "backendUrl": "http://localhost:4000",
   "printerName": "SP Printer2",
   "pollIntervalMs": 5000,
-  "deviceId": "c7f2c4e8-cd8b-4c33-bad5-7069c97ecf9f",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6ImM3ZjJjNGU4LWNkOGItNGMzMy1iYWQ1LTcwNjljOTdlY2Y5ZiIsInR5cGUiOiJwcmludC1hZ2VudCIsImlhdCI6MTc3MDI2NDkxOCwiZXhwIjoxNzcwMzA4MTE4fQ.Xfh_a_4FnFcxj_sbBVzVycx_W6euElU74B8wwI5H-_I"
+
+  "deviceId": "8d2b4997-03e5-4c78-bf2c-a55fbeb215c8",
+
+  "registrationToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6IjhkMmI0OTk3LTAzZTUtNGM3OC1iZjJjLWE1NWZiZWIyMTVjOCIsImlhdCI6MTc3MDM1MTU0NywiZXhwIjoxNzcyOTQzNTQ3fQ.gzCczOM_mtrqSM2ETFU2pnP6z_VKthVmJqPjH4ZkcEw",
+
+  "agentToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6IjhkMmI0OTk3LTAzZTUtNGM3OC1iZjJjLWE1NWZiZWIyMTVjOCIsInR5cGUiOiJwcmludC1hZ2VudCIsImlhdCI6MTc3MDM1MTU1NywiZXhwIjoxNzcwMzk0NzU3fQ.MYMVJakytXFhmxu2a8_BTih9Utebuzy1PDDJu35WzUQ",
+  "agentTokenExpiresAt": "2026-02-07T10:15:00Z"
 }

@@ -1,8 +1,0 @@
-{
-  "backendUrl": "http://localhost:4000",
-  "printerName": "PrinterSP",
-  "pollIntervalMs": 5000,
-  "deviceId": "cffcd8a1-bc9c-463e-9114-934eb1472354",
-  "agentToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6ImNmZmNkOGExLWJjOWMtNDYzZS05MTE0LTkzNGViMTQ3MjM1NCIsInR5cGUiOiJwcmludC1hZ2VudCIsImlhdCI6MTc3MDQwMzI5MSwiZXhwIjoxNzcwNDQ2NDkxfQ.kSQ1JAVtv6Pgm2EtXPvv4O7Vw04PsmURRCd7ro_bUx4",
-  "registrationToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6ImNmZmNkOGExLWJjOWMtNDYzZS05MTE0LTkzNGViMTQ3MjM1NCIsImlhdCI6MTc3MDQwMzI5MSwiZXhwIjoxNzcyOTk1MjkxfQ.1w9UZW5xId3b54mfisNem0Debkm9vE7v1DMsLEf06A8"
-}

@@ -1,10 +1,9 @@
-import { printWindows } from "./windows/index.js";
-import { printLinux } from "./linux/index.js";
+import os from "os";
+import * as windowsPrinter from "./windows/index.js";
 
 export function getPrinter() {
-  if (process.platform === "win32") {
-    return printWindows;
+  if (os.platform() === "win32") {
+    return windowsPrinter;
   }
-  return printLinux;
+  throw new Error("Unsupported OS");
 }
- 

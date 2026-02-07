@@ -8,44 +8,51 @@ const DOWNLOAD_DIR = path.resolve("jobs");
 
 let isWorking = false;
 
+/**
+ * 🚀 Start polling for jobs
+ */
 export function startJobPoller() {
-  if (!fs.existsSync(DOWNLOAD_DIR)) {
-    fs.mkdirSync(DOWNLOAD_DIR, { recursive: true });
+  // 🧹 Clean jobs dir on startup
+  if (fs.existsSync(DOWNLOAD_DIR)) {
+    fs.rmSync(DOWNLOAD_DIR, { recursive: true, force: true });
   }
+  fs.mkdirSync(DOWNLOAD_DIR, { recursive: true });
 
-  const pollInterval = 5000;
-
+  const pollInterval = 5000; // 5 seconds
   setInterval(pollOnce, pollInterval);
 }
 
+/**
+ * 🔁 Poll backend once
+ */
 async function pollOnce() {
   if (isWorking) return;
 
   let job = null;
+  const downloadedFiles = [];
 
   try {
-    // 🔁 MUST be POST (your backend expects POST)
-    const res = await apiRequest(
-      "/api/jobs/next",
-      "POST",
-      getToken()
-    );
-
+    const res = await apiRequest("/api/jobs/next", "POST", getToken());
     job = res.job;
-
     if (!job) return;
 
     isWorking = true;
-
     console.log("🖨️ New job received:", job.id);
-
-    const filePath = await downloadJobFile(job.id);
 
     const printer = getPrinter();
 
-    await printer(job, filePath);
+    // 🔁 PRINT EACH FILE
+    for (const file of job.files) {
+      const filePath = await downloadJobFile(job.id, file.fileId);
+      downloadedFiles.push(filePath);
 
-    // ✅ backend expects PATCH + PRINTED
+      await printer(job, filePath);
+
+      // 🧹 cleanup per file
+      fs.unlinkSync(filePath);
+    }
+
+    // ✅ Mark job PRINTED only if all succeed
     await apiRequest(
       `/api/jobs/${job.id}/status`,
       "PATCH",
@@ -58,15 +65,20 @@ async function pollOnce() {
   } catch (err) {
     console.error("❌ Job processing failed:", err.message);
 
-    if (job?.id) { 
-      try {
-        await apiRequest(
-          `/api/jobs/${job.id}/status`,
-          "PATCH",
-          getToken(),
-          { status: "FAILED" }
-        );
-      } catch (e) {}
+    // Keep files for debugging
+    downloadedFiles.forEach((f) => {
+      if (fs.existsSync(f)) {
+        console.warn("⚠️ Retained:", f);
+      }
+    });
+
+    if (job?.id) {
+      await apiRequest(
+        `/api/jobs/${job.id}/status`,
+        "PATCH",
+        getToken(),
+        { status: "FAILED" }
+      );
     }
 
   } finally {
@@ -74,36 +86,33 @@ async function pollOnce() {
   }
 }
 
-async function downloadJobFile(jobId) {
+/**
+ * 📥 Download print file (RAM-only → disk)
+ */
+async function downloadJobFile(jobId, fileId) {
   const token = getToken();
 
   const res = await fetch(
-    `http://localhost:4000/api/jobs/${jobId}/file`,
+    `http://localhost:4000/api/upload/${fileId}`,
     {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` },
     }
   );
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error("Failed to download job file: " + text);
+    throw new Error("Failed to download file");
   }
 
-  const contentType = res.headers.get("content-type") || "application/pdf";
-  const ext = contentType.includes("pdf") ? ".pdf" : "";
-
-  const filePath = path.join(DOWNLOAD_DIR, `${jobId}${ext}`);
-
+  const filePath = path.join(DOWNLOAD_DIR, `${jobId}-${fileId}.pdf`);
   const buffer = Buffer.from(await res.arrayBuffer());
-  fs.writeFileSync(filePath, buffer);
 
+  fs.writeFileSync(filePath, buffer);
   return filePath;
 }
 
-
+/**
+ * 🔐 Read agent token
+ */
 function getToken() {
   const configPath = path.resolve("config/agent.json");
   const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));

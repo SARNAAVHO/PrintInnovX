@@ -92,16 +92,24 @@ export default function PrintUI({ printer, deviceId }) {
   async function handlePrint() {
     if (!files.length) return;
 
-    // 1️⃣ Upload to RAM
-    const { fileId } = await uploadFile(files[0].file);
+    // ✅ MULTI-FILE UPLOAD
+    const uploadedFiles = [];
 
-    // 2️⃣ Create job
+    for (const f of files) {
+      const { fileId } = await uploadFile(f.file);
+      uploadedFiles.push({
+        fileId,
+        pages: f.pages,
+      });
+    }
+
+    // ✅ CREATE JOB WITH MULTIPLE FILES
     const job = await apiFetch("/api/jobs/create-paid", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         deviceId,
-        fileId,
+        files: uploadedFiles, // 👈 MULTI FILES
         copies,
         totalPages,
         color: colorMode === "color",

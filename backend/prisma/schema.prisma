@@ -24,7 +24,7 @@ model Device {
 model PrintJob {
   id                 String    @id @default(uuid())
   deviceId           String
-  fileId             String
+  files              Json
   copies             Int
   totalPages         Int @default(1)
   color              Boolean

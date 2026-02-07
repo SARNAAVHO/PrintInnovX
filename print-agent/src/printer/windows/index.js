@@ -5,6 +5,10 @@ import fs from "fs";
    Get all installed printers (Windows)
 -------------------------------------------- */
 export function getInstalledPrinters() {
+  if (typeof printer.getPrinters !== "function") {
+    console.warn("⚠️ node-printer not available");
+    return [];
+  }
   try {
     return printer.getPrinters();
   } catch (err) {

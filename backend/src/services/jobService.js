@@ -11,14 +11,18 @@ export async function createPaidPrintJob(data) {
 
   const {
     deviceId,
-    fileId,
+    files,
     copies = 1,
     totalPages,
     color = false,
   } = data;
 
+  if (!Array.isArray(files) || files.length === 0) {
+    throw new Error("At least one file is required");
+  }
+
   if (!deviceId) throw new Error("deviceId is required");
-  if (!fileId) throw new Error("fileId is required");
+  // if (!fileId) throw new Error("fileId is required");
 
   if (!Number.isInteger(totalPages) || totalPages <= 0) {
     throw new Error("totalPages must be a positive integer");
@@ -36,7 +40,7 @@ export async function createPaidPrintJob(data) {
   const job = await prisma.printJob.create({
     data: {
       deviceId,
-      fileId,
+      files,
       copies,
       color,
       totalPages,               // ✅ STORE THIS
@@ -82,17 +86,30 @@ export async function getNextJobForDevice(deviceId) {
     orderBy: {
       createdAt: "asc",
     },
+    include: {
+      Device: true, // 👈 JOIN DEVICE
+    },
   });
 
   if (!job) return null;
 
-  // 🔒 Lock job for printing
+  // 🔒 Lock job
   await prisma.printJob.update({
     where: { id: job.id },
     data: { status: "PRINTING" },
   });
 
-  return job;
+  // ✅ RETURN SHAPED PAYLOAD FOR AGENT
+  return {
+    id: job.id,
+    files: job.files,
+    copies: job.copies,
+    totalPages: job.totalPages,
+    color: job.color,
+
+    // 🔑 THIS IS THE FIX
+    printerName: job.Device.deviceName,
+  };
 }
 
 /**

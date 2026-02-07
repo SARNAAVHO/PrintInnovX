@@ -11,3 +11,7 @@ build/
 
 # Env files
 .env
+
+#jobs
+jobs
+config

@@ -1,46 +1,52 @@
 import os from "os";
-import * as windowsPrinter from "./windows/index.js";
+import { exec } from "child_process";
 
 const DEV_MODE = process.env.PRINT_AGENT_DEV === "true";
 
-export function getPrinter() {
-  if (os.platform() === "win32") {
-    return async function printer(job, filePath) {
-      const printers = safeGetPrinters();
+const SUMATRA_PATH =
+  '"C:\\Users\\SHIRSENDU ROY\\AppData\\Local\\SumatraPDF\\SumatraPDF.exe"';
 
-      // 🧪 DEV MODE OR NO PRINTERS
-      if (DEV_MODE || printers.length === 0) {
+
+export function getPrinter() {
+
+  if (os.platform() === "win32") {
+
+    return async function printer(job, filePath) {
+
+      const printerName = job.printerName;
+      const copies = job.copies || 1;
+
+      if (!printerName) {
+        throw new Error("job.printerName missing");
+      }
+
+      if (DEV_MODE) {
+
         console.log("🧪 DEV MODE PRINT");
         console.log("📄 File:", filePath);
-        console.log("🖨️ Intended printer:", job.printerName);
-        console.log("📦 Copies:", job.copies);
+        console.log("🖨️ Intended printer:", printerName);
+        console.log("📦 Copies:", copies);
 
-        // simulate print time
-        await new Promise((r) => setTimeout(r, 1500));
-
+        await new Promise(r => setTimeout(r, 1000));
         console.log("✅ DEV print completed");
         return;
       }
 
-      // 🔥 REAL PRINT
-      windowsPrinter.printFile(
-        filePath,
-        job.printerName,
-        {
-          copies: job.copies,
-          type: "PDF",
-        }
-      );
+      const cmd =
+        `${SUMATRA_PATH} -print-to "${printerName}" -print-settings "${copies}x" "${filePath}"`;
+
+      console.log("[INFO] Sending to printer:", printerName);
+
+      await new Promise((resolve, reject) => {
+        exec(cmd, (err) => {
+          if (err) return reject(err);
+          resolve();
+        });
+      });
+
+      console.log("🖨️ Real print sent");
     };
   }
 
   throw new Error("Unsupported OS");
-}
-
-function safeGetPrinters() {
-  try {
-    return windowsPrinter.getInstalledPrinters();
-  } catch {
-    return [];
-  }
 }

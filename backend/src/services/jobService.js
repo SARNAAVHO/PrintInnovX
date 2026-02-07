@@ -34,7 +34,7 @@ export async function createPaidPrintJob(data) {
 
   // 💰 FINAL pricing logic (authoritative)
   const pricePerPage = color ? 10 : 5; // INR
-  const amount = pricePerPage * totalPages * copies * 100; // paise
+  const amount = pricePerPage * totalPages * 100; // paise
 
   // 1️⃣ Create job
   const job = await prisma.printJob.create({

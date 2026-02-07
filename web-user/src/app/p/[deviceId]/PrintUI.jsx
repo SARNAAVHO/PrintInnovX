@@ -22,6 +22,7 @@ export default function PrintUI({ printer, deviceId }) {
   const [pageMode, setPageMode] = useState("all"); // all | range
   const [startPage, setStartPage] = useState(1);
   const [endPage, setEndPage] = useState(1);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   function loadRazorpay() {
   return new Promise((resolve) => {
@@ -79,70 +80,95 @@ export default function PrintUI({ printer, deviceId }) {
 
   // ===== Calculations =====
   const totalPages = files.reduce((sum, f) => {
-    if (pageMode === "all") return sum + f.pages;
+    if (pageMode === "all") return sum + f.pages * copies;
 
     const from = Math.max(1, startPage);
     const to = Math.min(endPage, f.pages);
-    return sum + Math.max(0, to - from + 1);
+    return sum + Math.max(0, to - from + 1) * copies;
   }, 0);
 
   const ratePerPage = colorMode === "color" ? 10 : 5;
-  const totalPrice = totalPages * copies * ratePerPage;
+  const totalPrice = totalPages * ratePerPage;
 
   async function handlePrint() {
-    if (!files.length) return;
+    if (!files.length || isProcessing) return;
 
-    // ✅ MULTI-FILE UPLOAD
-    const uploadedFiles = [];
+    setIsProcessing(true);
 
-    for (const f of files) {
-      const { fileId } = await uploadFile(f.file);
-      uploadedFiles.push({
-        fileId,
-        pages: f.pages,
+    try {
+      // ✅ MULTI-FILE UPLOAD
+      const uploadedFiles = [];
+
+      for (const f of files) {
+        const { fileId } = await uploadFile(f.file);
+        uploadedFiles.push({
+          fileId,
+          pages: f.pages,
+        });
+      }
+
+      // ✅ CREATE JOB
+      const job = await apiFetch("/api/jobs/create-paid", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          deviceId,
+          files: uploadedFiles,
+          copies,
+          totalPages,
+          color: colorMode === "color",
+        }),
       });
+
+      // Load Razorpay
+      const loaded = await loadRazorpay();
+      if (!loaded) {
+        setIsProcessing(false);
+        alert("Razorpay SDK failed to load");
+        return;
+      }
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: job.amount,
+        currency: job.currency,
+        name: "PrintInnovX",
+        description: "Print Job Payment",
+        order_id: job.razorpayOrderId,
+
+        handler: function () {
+          // ✅ LOGIC-ONLY CLEANUP (NO UI CHANGES)
+          setFiles([]);
+          setCopies(1);
+          setColorMode("bw");
+          setPageMode("all");
+          setStartPage(1);
+          setEndPage(1);
+          setIsProcessing(false);
+
+          alert("Payment successful! Printing will start shortly.");
+        },
+
+        modal: {
+          ondismiss: function () {
+            setIsProcessing(false);
+          },
+        },
+
+        theme: {
+          color: "#000000",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+
+    } catch (err) {
+      console.error(err);
+      setIsProcessing(false);
+      alert("Something went wrong. Please try again.");
     }
-
-    // ✅ CREATE JOB WITH MULTIPLE FILES
-    const job = await apiFetch("/api/jobs/create-paid", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        deviceId,
-        files: uploadedFiles, // 👈 MULTI FILES
-        copies,
-        totalPages,
-        color: colorMode === "color",
-      }),
-    });
-
-    // 3️⃣ Load Razorpay
-    const loaded = await loadRazorpay();
-    if (!loaded) {
-      alert("Razorpay SDK failed to load");
-      return;
-    }
-
-    // 4️⃣ Open Razorpay Checkout
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: job.amount,
-      currency: job.currency,
-      name: "PrintInnovX",
-      description: "Print Job Payment",
-      order_id: job.razorpayOrderId,
-      handler: function (response) {
-        console.log("PAYMENT SUCCESS", response);
-        alert("Payment successful! Printing will start shortly.");
-      },
-      theme: {
-        color: "#000000",
-      },
-    };
-
-    const rzp = new window.Razorpay(options);
-    rzp.open();
-}
+  }
 
   return (
     <main className="min-h-screen bg-[#f2f2f7] flex flex-col">

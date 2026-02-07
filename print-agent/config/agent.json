@@ -1,8 +1,0 @@
-{
-  "backendUrl": "http://localhost:4000",
-  "printerName": "HP DeskJet 2300 series",
-  "pollIntervalMs": 5000,
-  "deviceId": "c6676b12-68ad-4dca-b831-d00e663db72c",
-  "agentToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6ImM2Njc2YjEyLTY4YWQtNGRjYS1iODMxLWQwMGU2NjNkYjcyYyIsInR5cGUiOiJwcmludC1hZ2VudCIsImlhdCI6MTc3MDQ4OTU5MCwiZXhwIjoxNzcwNTMyNzkwfQ.e_wnA8DpDnsNWoYfGhd7yLtEOeHRXWv0TMtaytii_Vs",
-  "registrationToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6ImM2Njc2YjEyLTY4YWQtNGRjYS1iODMxLWQwMGU2NjNkYjcyYyIsImlhdCI6MTc3MDQ4OTU5MCwiZXhwIjoxNzczMDgxNTkwfQ.Z4bAZsPefMjnlTaCpZIpMFh6WOWIOnIlgLcwehI2gH4"
-}

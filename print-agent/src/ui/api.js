@@ -22,3 +22,5 @@ export async function activateAgent(deviceId, authToken) {
     registrationToken: regRes.token
   };
 }
+
+// for test

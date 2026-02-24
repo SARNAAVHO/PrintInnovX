@@ -18,13 +18,6 @@ export default function Navbar() {
         {/* Right Actions */}
         <div className="flex items-center gap-6">
 
-          {/* Admin link */}
-          <Link
-            href="/admin"
-            className="text-sm text-white/80 hover:text-white transition"
-          >
-            Admin
-          </Link>
 
           {/* Register Device button */}
           <Link

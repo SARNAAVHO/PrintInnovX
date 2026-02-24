@@ -1,23 +1,28 @@
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "sonner";
-import { ClerkProvider } from "@clerk/nextjs";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata = {
-  title: "PrintInnovX",
-  description: "Enterprise-grade cloud printing platform",
+  title: "Admin",
+  description: "PrintInnovX Admin",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-        <ClerkProvider
-          signInUrl="/admin-login"
-          signUpUrl="/admin-login"
-          fallbackRedirectUrl="/admin"
-        >
-          {children}
-        </ClerkProvider>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {children}
       </body>
     </html>
   );

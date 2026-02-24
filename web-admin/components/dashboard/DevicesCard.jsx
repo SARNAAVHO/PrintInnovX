@@ -1,27 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
 import DeviceItem from "./DeviceItem";
 import { fetchAdminDevices } from "@/lib/api";
 
 export default function DevicesCard() {
-  const { getToken } = useAuth();
   const [devices, setDevices] = useState([]);
 
   useEffect(() => {
     async function load() {
       try {
-        const token = await getToken();
-        const data = await fetchAdminDevices(token);
+        const data = await fetchAdminDevices();
         setDevices(data);
       } catch (err) {
-        console.error(err);
+        console.error("Devices error:", err);
       }
     }
 
     load();
-  }, [getToken]);
+  }, []);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6">

@@ -24,8 +24,12 @@ export async function registerDevice({ shopName, deviceName }) {
 /**
  * ADMIN – DASHBOARD STATS
  */
-export async function fetchAdminStats() {
-  const res = await fetch(`${API_BASE}/api/admin/stats`);
+export async function fetchAdminStats(token) {
+  const res = await fetch(`${API_BASE}/api/admin/stats`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   const data = await res.json();
 
@@ -38,8 +42,14 @@ export async function fetchAdminStats() {
 /**
  * ADMIN – DEVICES LIST
  */
-export async function fetchAdminDevices() {
-  const res = await fetch(`${API_BASE}/api/admin/devices`);
+export async function fetchAdminDevices(token) {
+  const res = await fetch(`${API_BASE}/api/admin/devices`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
 
   const data = await res.json();
 
@@ -53,8 +63,14 @@ export async function fetchAdminDevices() {
 /**
  * ADMIN – RECENT JOBS
  */
-export async function fetchAdminJobs() {
-  const res = await fetch(`${API_BASE}/api/admin/jobs`);
+export async function fetchAdminJobs(token) {
+  const res = await fetch(`${API_BASE}/api/admin/jobs`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
 
   const data = await res.json();
 
@@ -64,6 +80,7 @@ export async function fetchAdminJobs() {
 
   return data;
 }
+
 /**
  * PUBLIC – FETCH DEVICE DETAILS (QR PAGE)
  */
@@ -87,7 +104,7 @@ export async function fetchPublicDevice(deviceId) {
  */
 export async function fetchAdminDeviceDetail(deviceId) {
   const res = await fetch(
-    `${API_BASE}/api/admin/devices/${deviceId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/devices/${deviceId}`,
     { cache: "no-store" }
   );
 

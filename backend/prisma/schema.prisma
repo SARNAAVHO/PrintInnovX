@@ -7,8 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Shop {
+  id          String   @id @default(uuid())
+  clerkUserId String   @unique
+  ownerName   String
+  shopName    String
+
+  createdAt   DateTime @default(now())
+
+  devices     Device[]
+}
+
 model Device {
   id         String   @id @default(uuid())
+  shopId     String
+
   shopName   String
   deviceName String
   authToken  String
@@ -18,7 +31,9 @@ model Device {
   lastSeenAt DateTime?
 
   createdAt  DateTime @default(now())
-  printJobs  PrintJob[] 
+
+  shop       Shop     @relation(fields: [shopId], references: [id])
+  printJobs  PrintJob[]
 }
 
 model PrintJob {

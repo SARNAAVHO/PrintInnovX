@@ -2,27 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { FileText, TrendingUp, Printer, Activity } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
 import StatCard from "./StatCard";
 import { fetchAdminStats } from "@/lib/api";
 
 export default function StatsGrid() {
-  const { getToken } = useAuth();
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const token = await getToken();
-        const data = await fetchAdminStats(token);
+        const data = await fetchAdminStats();
         setStats(data);
       } catch (err) {
-        console.error(err);
+        console.error("Stats error:", err);
       }
     }
 
     load();
-  }, [getToken]);
+  }, []);
 
   if (!stats) {
     return <div className="text-slate-400">Loading stats...</div>;

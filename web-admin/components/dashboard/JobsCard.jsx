@@ -1,26 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
 import { fetchAdminJobs } from "@/lib/api";
 
 export default function JobsCard() {
-  const { getToken } = useAuth();
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
     async function load() {
       try {
-        const token = await getToken();
-        const data = await fetchAdminJobs(token);
+        const data = await fetchAdminJobs();
         setJobs(data);
       } catch (err) {
-        console.error(err);
+        console.error("Jobs error:", err);
       }
     }
 
     load();
-  }, [getToken]);
+  }, []);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6">

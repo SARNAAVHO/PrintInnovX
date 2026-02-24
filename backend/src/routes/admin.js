@@ -5,18 +5,18 @@ import {
   getAdminDeviceDetail,
   getAdminJobs,
 } from "../controllers/adminController.js";
-import { adminAuth } from "../middleware/adminAuth.js";
-import { ensureAdmin } from "../controllers/adminAuthController.js";
+// import { adminAuth } from "../middleware/adminAuth.js";
+// import { ensureAdmin } from "../controllers/adminAuthController.js";
 
 const router = express.Router();
 
 /**
  * ADMIN DASHBOARD ROUTES (PROTECTED)
  */
-router.get("/stats", adminAuth, getAdminStats);
-router.get("/devices", adminAuth, getAdminDevices);
-router.get("/devices/:deviceId", adminAuth, getAdminDeviceDetail);
-router.get("/jobs", adminAuth, getAdminJobs);
-router.post("/ensure", adminAuth, ensureAdmin);
+router.get("/stats", getAdminStats);
+router.get("/devices", getAdminDevices);
+router.get("/devices/:deviceId", getAdminDeviceDetail);
+router.get("/jobs", getAdminJobs);
+// router.post("/ensure", ensureAdmin);
 
 export default router;

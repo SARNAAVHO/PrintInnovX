@@ -2,7 +2,6 @@
 
 import { QrCode } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "@clerk/nextjs";
 import QRCode from "qrcode";
 import { fetchAdminDeviceDetail } from "@/lib/api";
 
@@ -16,7 +15,7 @@ function formatLastSeen(date) {
 
 async function downloadDeviceQR(deviceId, shopName) {
   const PUBLIC_BASE =
-    process.env.NEXT_PUBLIC_PUBLIC_APP_URL || "http://localhost:3001";
+    process.env.NEXT_PUBLIC_PUBLIC_APP_URL || "http://localhost:3000";
 
   const qrUrl = `${PUBLIC_BASE}/p/${deviceId}`;
   const qrDataUrl = await QRCode.toDataURL(qrUrl, { width: 320 });
@@ -34,7 +33,6 @@ export default function DeviceItem({
   status,
   lastSeen,
 }) {
-  const { getToken } = useAuth();
   const [open, setOpen] = useState(false);
   const [detail, setDetail] = useState(null);
 
@@ -44,11 +42,10 @@ export default function DeviceItem({
     setOpen(true);
 
     try {
-      const token = await getToken();
-      const data = await fetchAdminDeviceDetail(id, token);
+      const data = await fetchAdminDeviceDetail(id);
       setDetail(data);
     } catch (err) {
-      console.error(err);
+      console.error("Device detail error:", err);
     }
   }
 

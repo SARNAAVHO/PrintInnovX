@@ -1,15 +1,24 @@
+import { verifyToken } from "@clerk/backend";
 import prisma from "../prisma.js";
 
-export async function adminAuth(req, res, next) {
+export const adminAuth = async (req, res, next) => {
   try {
-    const auth = req.auth(); // ✅ NEW API
+    const authHeader = req.headers.authorization;
 
-    if (!auth?.userId) {
-      return res.status(401).json({ error: "Unauthenticated" });
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Missing token" });
     }
 
+    const token = authHeader.split(" ")[1];
+
+    const payload = await verifyToken(token, {
+      secretKey: process.env.CLERK_SECRET_KEY,
+    });
+
+    const clerkUserId = payload.sub;
+
     const admin = await prisma.admin.findUnique({
-      where: { clerkUserId: auth.userId },
+      where: { clerkUserId },
     });
 
     if (!admin) {
@@ -20,6 +29,6 @@ export async function adminAuth(req, res, next) {
     next();
   } catch (err) {
     console.error("Admin auth error:", err);
-    return res.status(500).json({ error: "Admin auth failed" });
+    return res.status(401).json({ error: "Invalid token" });
   }
-}
+};

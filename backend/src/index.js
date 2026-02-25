@@ -14,6 +14,7 @@ import adminAuthRoutes from "./routes/adminAuth.js";
 import uploadRoutes from "./routes/upload.js";
 import userRoutes from "./routes/user.js";
 import shopRoutes from "./routes/shop.js";
+import publicDeviceRoutes from "./routes/publicDevice.js";
 
 dotenv.config();
 
@@ -67,6 +68,7 @@ app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/shop", shopRoutes);
+app.use("/api/public/devices", publicDeviceRoutes);
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });

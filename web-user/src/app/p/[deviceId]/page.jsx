@@ -3,7 +3,7 @@ import PrintUI from "./PrintUI";
 
 async function getPrinter(deviceId) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/devices/${deviceId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/public/devices/${deviceId}`,
     { cache: "no-store" }
   );
 

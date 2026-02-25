@@ -1,41 +1,118 @@
 import express from "express";
-import { registerDevice, getDeviceById } from "../services/deviceService.js";
+import prisma from "../prisma.js";
+import { requireAuth } from "../middleware/auth.js";
+import crypto from "crypto";
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
+/* ===========================
+   CREATE DEVICE (AUTH)
+=========================== */
+router.post("/create", requireAuth, async (req, res) => {
   try {
-    const { shopName, deviceName } = req.body || {};
+    const clerkUserId = req.clerkUserId;
+    const { deviceName } = req.body;
 
-    if (!shopName || !deviceName) {
-      return res.status(400).json({
-        error: "shopName and deviceName are required",
-      });
+    if (!deviceName) {
+      return res.status(400).json({ error: "Device name required" });
     }
 
-    const device = await registerDevice({ shopName, deviceName });
+    // 🔥 Find shop by clerkUserId
+    const shop = await prisma.shop.findUnique({
+      where: { clerkUserId },
+    });
+
+    if (!shop) {
+      return res.status(404).json({ error: "Shop not found" });
+    }
+
+    // 🔥 Create device with REQUIRED shopId
+    const device = await prisma.device.create({
+      data: {
+        shopId: shop.id,              // ✅ REQUIRED
+        shopName: shop.shopName,      // optional duplicate
+        deviceName,
+        authToken: crypto.randomBytes(32).toString("hex"),
+      },
+    });
+
     res.json(device);
   } catch (err) {
-    console.error("Register device error:", err);
+    console.error("Create device error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-router.get("/:deviceId", async (req, res) => {
+/* ===========================
+   GET SHOP DEVICES
+=========================== */
+router.get("/", requireAuth, async (req, res) => {
+  const clerkUserId = req.clerkUserId;
+
+  const shop = await prisma.shop.findUnique({
+    where: { clerkUserId },
+    include: { devices: true },
+  });
+
+  if (!shop) {
+    return res.status(404).json({ error: "Shop not found" });
+  }
+
+  res.json(shop.devices);
+});
+
+router.get("/:deviceId", requireAuth, async (req, res) => {
+  const { deviceId } = req.params;
+
+  const device = await prisma.device.findUnique({
+    where: { id: deviceId },
+  });
+
+  if (!device) {
+    return res.status(404).json({ error: "Device not found" });
+  }
+
+  res.json(device);
+});
+
+/* ===========================
+   DELETE DEVICE (AUTH + OWNERSHIP CHECK)
+=========================== */
+router.delete("/:deviceId", requireAuth, async (req, res) => {
   try {
+    const clerkUserId = req.clerkUserId;
     const { deviceId } = req.params;
 
-    const device = await getDeviceById(deviceId);
+    // Find shop of logged-in user
+    const shop = await prisma.shop.findUnique({
+      where: { clerkUserId },
+    });
 
-    if (!device) {
-      return res.status(404).json({
-        error: "Device not found",
-      });
+    if (!shop) {
+      return res.status(404).json({ error: "Shop not found" });
     }
 
-    res.json(device);
+    // Check device belongs to this shop
+    const device = await prisma.device.findFirst({
+      where: {
+        id: deviceId,
+        shopId: shop.id,
+      },
+    });
+
+    if (!device) {
+      return res.status(404).json({ error: "Device not found" });
+    }
+
+    // Delete device
+    await prisma.device.delete({
+      where: { id: deviceId },
+    });
+
+    res.json({ message: "Device deleted successfully" });
+
   } catch (err) {
-    console.error("Get device error:", err);
+    console.error("Delete device error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });

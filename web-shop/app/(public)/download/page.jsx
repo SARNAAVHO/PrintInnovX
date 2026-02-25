@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Download,
   Printer,
@@ -10,18 +11,18 @@ export default function DownloadPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* HEADER */}
-      <header className="flex items-center justify-between px-10 py-6 bg-white border-slate-200">
+      <header className="flex items-center justify-between px-10 py-6 bg-white border-b border-slate-200">
         <div className="flex items-center gap-2 text-xl font-semibold text-gray-900">
           <Printer className="text-indigo-600" />
           Download Print Agent
         </div>
 
-        <a
+        <Link
           href="/"
-          className="border border-gray-300 px-4 py-2 rounded-md text-sm text-gray-700 hover:bg-orange-500 hover:text-white hover:border-none transition"
+          className="border border-gray-300 px-4 py-2 rounded-md text-sm text-gray-700 hover:bg-orange-500 hover:text-white hover:border-orange-500 transition"
         >
           Back to Home
-        </a>
+        </Link>
       </header>
 
       {/* HERO */}
@@ -38,7 +39,7 @@ export default function DownloadPage() {
       {/* DOWNLOAD CARDS */}
       <section className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
         {/* WINDOWS */}
-        <div className="bg-white rounded-xl shadow-sm border p-8">
+        <div className="bg-white rounded-xl shadow-sm border p-8 hover:shadow-md transition">
           <div className="flex items-center gap-3 mb-4">
             <Monitor className="text-indigo-600" />
             <h3 className="text-xl font-semibold">Windows</h3>
@@ -49,27 +50,23 @@ export default function DownloadPage() {
           </p>
 
           <ul className="space-y-3 text-sm text-gray-700 mb-8">
-            <li className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-600" />
-              Automatic startup on boot
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-600" />
-              System tray integration
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-600" />
-              Native Windows printer support
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-600" />
-              Silent background operation
-            </li>
+            {[
+              "Automatic startup on boot",
+              "System tray integration",
+              "Native Windows printer support",
+              "Silent background operation",
+            ].map((feature, index) => (
+              <li key={index} className="flex items-center gap-2">
+                <CheckCircle2 size={16} className="text-green-600" />
+                {feature}
+              </li>
+            ))}
           </ul>
 
           <a
             href="/agents/printcloud-agent-windows.exe"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-md flex items-center justify-center gap-2 font-medium"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-md flex items-center justify-center gap-2 font-medium transition"
+            download
           >
             <Download size={16} />
             Download for Windows
@@ -77,10 +74,12 @@ export default function DownloadPage() {
         </div>
 
         {/* LINUX */}
-        <div className="bg-white rounded-xl shadow-sm border p-8">
+        <div className="bg-white rounded-xl shadow-sm border p-8 hover:shadow-md transition">
           <div className="flex items-center gap-3 mb-4">
             <Terminal className="text-indigo-600" />
-            <h3 className="text-xl font-semibold">Linux / Raspberry Pi</h3>
+            <h3 className="text-xl font-semibold">
+              Linux / Raspberry Pi
+            </h3>
           </div>
 
           <p className="text-gray-600 mb-6">
@@ -88,27 +87,23 @@ export default function DownloadPage() {
           </p>
 
           <ul className="space-y-3 text-sm text-gray-700 mb-8">
-            <li className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-600" />
-              Systemd service integration
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-600" />
-              CUPS printer support
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-600" />
-              Low resource footprint
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-600" />
-              Perfect for Raspberry Pi
-            </li>
+            {[
+              "Systemd service integration",
+              "CUPS printer support",
+              "Low resource footprint",
+              "Perfect for Raspberry Pi",
+            ].map((feature, index) => (
+              <li key={index} className="flex items-center gap-2">
+                <CheckCircle2 size={16} className="text-green-600" />
+                {feature}
+              </li>
+            ))}
           </ul>
 
           <a
             href="/agents/printcloud-agent-linux.sh"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-md flex items-center justify-center gap-2 font-medium"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-md flex items-center justify-center gap-2 font-medium transition"
+            download
           >
             <Download size={16} />
             Download for Linux
@@ -123,7 +118,7 @@ export default function DownloadPage() {
             Installation & Setup
           </h2>
 
-          {/* WINDOWS SETUP */}
+          {/* WINDOWS */}
           <div className="mb-8">
             <h3 className="font-semibold mb-3 flex items-center gap-2">
               <Monitor size={18} /> Windows Setup
@@ -139,11 +134,11 @@ export default function DownloadPage() {
               <li>Follow the installation wizard</li>
               <li>Enter your Device ID and Authentication Token</li>
               <li>Agent starts automatically in background</li>
-              <li>Check system tray for PrintCloud icon</li>
+              <li>Check system tray for PrintInnovX icon</li>
             </ol>
           </div>
 
-          {/* LINUX SETUP */}
+          {/* LINUX */}
           <div>
             <h3 className="font-semibold mb-3 flex items-center gap-2">
               <Terminal size={18} /> Linux Setup
@@ -179,24 +174,29 @@ export default function DownloadPage() {
       {/* CONFIGURATION */}
       <section className="max-w-4xl mx-auto px-6 mb-20">
         <div className="bg-white rounded-xl border shadow-sm p-8">
-          <h2 className="text-2xl font-semibold mb-4">Configuration</h2>
+          <h2 className="text-2xl font-semibold mb-4">
+            Configuration
+          </h2>
 
           <p className="text-gray-600 mb-4">
-            The agent requires two pieces of information from your device
-            registration:
+            The agent requires two pieces of information from your
+            device registration:
           </p>
 
           <div className="space-y-3 text-sm text-gray-700">
             <p>
-              <strong>Device ID:</strong> Unique identifier for your printer
+              <strong>Device ID:</strong> Unique identifier for your
+              printer
             </p>
             <p>
-              <strong>Auth Token:</strong> Security token for authentication
+              <strong>Auth Token:</strong> Security token for
+              authentication
             </p>
           </div>
 
           <p className="text-xs text-gray-500 mt-4">
-            These are provided when you register a device. Keep them secure!
+            These are provided when you register a device. Keep
+            them secure!
           </p>
         </div>
       </section>
@@ -207,12 +207,12 @@ export default function DownloadPage() {
           Don&apos;t have a device registered yet?
         </p>
 
-        <a
+        <Link
           href="/register"
-          className="inline-block border border-gray-300 px-6 py-3 rounded-md text-gray-700 hover:bg-indigo-600 hover:border-none hover:text-white"
+          className="inline-block border border-gray-300 px-6 py-3 rounded-md text-gray-700 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition"
         >
           Register a Device First
-        </a>
+        </Link>
       </div>
     </div>
   );

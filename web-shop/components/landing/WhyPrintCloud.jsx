@@ -5,7 +5,7 @@ import FeatureCard from "../common/FeatureCard";
 
 export default function WhyPrintCloud() {
   return (
-    <section className="bg-[#0b0f2a] py-6 relative overflow-hidden">
+    <section className="bg-[#0b0f2a] py-20 relative overflow-hidden">
       {/* Subtle Grid Background Effect */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
            style={{ backgroundImage: `radial-gradient(#fff 1px, transparent 1px)`, backgroundSize: '30px 30px' }} />

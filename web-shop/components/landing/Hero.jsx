@@ -9,7 +9,7 @@ export default function Hero() {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] animate-pulse" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px]" />
 
-      <div className="max-w-7xl mx-auto px-8 lg:px-12 py-20 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+      <div className="max-w-7xl mx-auto px-8 lg:px-12 py-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
         
         {/* LEFT CONTENT */}
         <div className="flex flex-col items-start text-left">
@@ -33,7 +33,7 @@ export default function Hero() {
             <span className="text-slate-200"> No apps required.</span> Just scan, pay, and watch your documents fly.
           </p>
 
-          <div className="mt-12 flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto">
+          <div className="mt-10 flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto">
             <a
               href="/register"
               className="group w-full sm:w-auto inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-10 py-4 rounded-2xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95 gap-2"
@@ -50,18 +50,6 @@ export default function Hero() {
               Download Agent
             </a>
           </div>
-
-          {/* Micro-Social Proof / Features */}
-          <div className="mt-12 flex items-center gap-8 border-t border-white/10 pt-8 w-full">
-            <div className="flex items-center gap-2 text-slate-400">
-              <Zap size={18} className="text-amber-400" />
-              <span className="text-sm font-semibold tracking-wide">Instant Setup</span>
-            </div>
-            <div className="flex items-center gap-2 text-slate-400">
-              <ShieldCheck size={18} className="text-emerald-400" />
-              <span className="text-sm font-semibold tracking-wide">Secure Cloud</span>
-            </div>
-          </div>
         </div>
 
         {/* RIGHT IMAGE / GRAPHIC */}
@@ -71,13 +59,13 @@ export default function Hero() {
           
           <div className="relative rounded-[2.5rem] p-3 bg-white/5 border border-white/10 backdrop-blur-2xl shadow-2xl overflow-hidden transform group-hover:-rotate-1 group-hover:scale-[1.02] transition-all duration-700">
             <img
-              src="/images/land_img.jpeg"
+              src="/images/Printer.png"
               alt="Printer preview"
               className="rounded-[1.8rem] w-full h-auto object-cover shadow-inner"
             />
             
             {/* Floating UI Element (Optional Overlays) */}
-            <div className="absolute bottom-10 left-10 right-10 p-6 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl hidden md:block animate-bounce-slow">
+            <div className="absolute bottom-7 left-10 right-10 p-2 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl hidden md:block animate-bounce-slow">
               <div className="flex items-center gap-4">
                 <div className="p-2 bg-indigo-500 rounded-lg">
                   <Printer size={20} />

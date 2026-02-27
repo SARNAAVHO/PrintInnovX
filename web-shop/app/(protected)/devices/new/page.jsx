@@ -144,12 +144,12 @@ export default function AddDevicePage() {
           <div className="bg-[#0b0f2a] border border-white/5 p-8 rounded-[3rem] shadow-2xl shadow-black/50">
             <div className="mb-8 space-y-2">
               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 ml-2">
-                Display Identifier
+                Provide your exact Printer Name and Model
               </label>
               <input
                 value={deviceName}
                 onChange={(e) => setDeviceName(e.target.value)}
-                placeholder="e.g. TERMINAL_ALPHA"
+                placeholder="e.g. HP DJ 21300 Series"
                 className="w-full bg-white/[0.03] border border-white/10 text-white px-6 py-5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-700 font-bold"
                 onKeyDown={(e) => e.key === 'Enter' && createDevice()}
               />

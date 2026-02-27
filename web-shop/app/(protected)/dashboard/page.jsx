@@ -14,6 +14,10 @@ import {
   Download,
   Copy,
   Trash2,
+  ChevronRight,
+  TrendingUp,
+  X,
+  Lock
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -28,12 +32,10 @@ export default function DashboardPage() {
     const loadShop = async () => {
       try {
         const res = await apiFetch("/api/shop/dashboard");
-
         if (!res.ok) {
           router.push("/onboarding");
           return;
         }
-
         const data = await res.json();
         setShop(data);
       } catch (err) {
@@ -42,18 +44,15 @@ export default function DashboardPage() {
         setLoading(false);
       }
     };
-
     loadShop();
   }, [apiFetch, router]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="animate-spin text-indigo-600" size={40} />
-          <p className="text-sm font-medium text-slate-500 animate-pulse">
-            Loading your dashboard...
-          </p>
+      <div className="min-h-screen flex items-center justify-center bg-[#0b0f2a]">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="animate-spin text-indigo-500" size={48} />
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Syncing Nodes...</p>
         </div>
       </div>
     );
@@ -63,239 +62,157 @@ export default function DashboardPage() {
 
   const devices = shop.devices || [];
   const jobs = shop.printJobs || [];
-  const revenue = jobs.reduce((acc, job) => acc + (job.amount || 0), 0);
-  const rev = revenue / 100;
+  const revenue = jobs.reduce((acc, job) => acc + (job.amount || 0), 0) / 100;
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
-      {/* ================= TOP BAR ================= */}
-      <header className="bg-white/70 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-slate-900 hover:opacity-80 transition-opacity"
-          >
-            <div className="bg-indigo-600 p-1.5 rounded-lg">
-              <Printer className="text-white" size={20} />
+    <div className="min-h-screen bg-[#05071a] text-white font-sans selection:bg-indigo-500/30">
+      
+      {/* ================= HEADER (Now Full Width) ================= */}
+      <header className="px-6 md:px-12 h-20 flex items-center justify-between border-b border-white/5 sticky top-0 bg-[#05071a]/80 backdrop-blur-md z-40">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/20">
+              <Printer size={20} className="text-white" />
             </div>
-            PrintInnovX
+            <span className="text-xl font-black tracking-tighter hidden sm:block">PrintInnovX</span>
           </Link>
-
-          <Link
-            href="/"
-            className="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2 rounded-xl text-sm font-medium text-slate-700 hover:border-indigo-600 hover:text-indigo-600 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
-          >
-            <Home size={16} />
-            <span className="hidden sm:inline">Back to Home</span>
-          </Link>
+          <div className="h-6 w-px bg-white/10 hidden md:block" />
+          <div className="hidden md:flex items-center gap-3">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Dashboard</h2>
+            <ChevronRight size={14} className="text-slate-700" />
+            <span className="text-sm font-bold text-white/80">{shop.shopName}</span>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-4 md:gap-8">
+           <Link href="/download" className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-400 transition-colors">
+              <Download size={14} /> Agent
+           </Link>
+           <Link href="/" className="bg-white/5 border border-white/10 p-2.5 rounded-xl text-slate-400 hover:text-white transition-all">
+              <Home size={18} />
+           </Link>
         </div>
       </header>
 
-      {/* ================= MAIN ================= */}
-      <div className="max-w-7xl mx-auto px-6 md:px-10 mt-12">
-        {/* HEADER */}
-        <div className="mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-            {shop.shopName}
-          </h1>
-          <p className="text-slate-500 mt-2 text-base max-w-xl">
-            Manage your device fleet and monitor printing activity in real-time.
-          </p>
+      <main className="max-w-7xl mx-auto px-6 md:px-12 py-12">
+        {/* WELCOME SECTION */}
+        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
+          <div>
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white mb-2">
+              System <span className="text-indigo-500">Overview.</span>
+            </h1>
+            <p className="text-slate-400 font-medium tracking-tight">Managing fleet for <span className="text-white underline decoration-indigo-500/30 underline-offset-4">{shop.shopName}</span></p>
+          </div>
+          <Link
+              href="/devices/new"
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-600/20 active:scale-95 text-center justify-center"
+            >
+              <Plus size={18} />
+              Add Printer Node
+          </Link>
         </div>
 
-        {/* STATS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <StatCard
-            icon={<Printer size={24} className="text-indigo-600" />}
-            iconBg="bg-indigo-50"
-            title="Total Devices"
-            value={devices.length}
-          />
-          <StatCard
-            icon={<FileText size={24} className="text-emerald-600" />}
-            iconBg="bg-emerald-50"
-            title="Total Print Jobs"
-            value={jobs.length}
-          />
-          <StatCard
-            icon={<Activity size={24} className="text-amber-500" />}
-            iconBg="bg-amber-50"
-            title="Revenue (₹)"
-            value={rev.toLocaleString("en-IN")}
-          />
+        {/* STAT CARDS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          <StatCard title="Active Fleet" value={devices.length} icon={<Printer />} color="indigo" />
+          <StatCard title="Total Jobs" value={jobs.length} icon={<FileText />} color="emerald" />
+          <StatCard title="Earnings" value={`₹${revenue.toLocaleString("en-IN")}`} icon={<TrendingUp />} color="amber" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* ================= DEVICES ================= */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex justify-between items-end">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-                  Connected Devices
-                </h2>
-              </div>
-              <Link
-                href="/devices/new"
-                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm shadow-indigo-200 transition-all hover:-translate-y-0.5 active:translate-y-0"
-              >
-                <Plus size={18} />
-                Add Device
-              </Link>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* DEVICES LIST */}
+          <div className="lg:col-span-8 space-y-8">
+            <div className="flex items-center justify-between">
+              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-600">Hardware Grid</h3>
+              <div className="h-px flex-1 bg-white/5 mx-6" />
             </div>
-
+            
             {devices.length === 0 ? (
-              <EmptyState
-                title="No Devices Added"
-                description="You haven’t connected any printer devices to this shop yet."
-                buttonText="Add Your First Device"
-                link="/devices/new"
-              />
+              <div className="h-72 border-2 border-dashed border-white/5 rounded-[3rem] flex flex-col items-center justify-center text-center p-8 bg-white/[0.01]">
+                <Printer size={40} className="text-slate-800 mb-4" />
+                <p className="text-slate-600 font-black uppercase text-[10px] tracking-widest">No nodes detected</p>
+              </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {devices.map((device) => (
                   <div
                     key={device.id}
                     onClick={() => setSelectedDevice(device)}
-                    className="group bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all cursor-pointer flex flex-col justify-between"
+                    className="group relative bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-8 transition-all hover:bg-white/[0.05] hover:border-indigo-500/40 cursor-pointer overflow-hidden shadow-2xl shadow-black/20"
                   >
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="p-3 bg-slate-50 group-hover:bg-indigo-50 rounded-xl transition-colors">
-                        <Printer
-                          size={24}
-                          className="text-slate-600 group-hover:text-indigo-600 transition-colors"
-                        />
+                    <div className="flex justify-between items-start mb-10">
+                      <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
+                        <Printer size={22} />
                       </div>
-                      <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-50 border border-slate-100">
-                        <span className="relative flex h-2.5 w-2.5">
-                          {device.isOnline && (
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          )}
-                          <span
-                            className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-                              device.isOnline ? "bg-emerald-500" : "bg-slate-300"
-                            }`}
-                          ></span>
-                        </span>
-                        <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-600">
-                          {device.isOnline ? "Online" : "Offline"}
-                        </span>
-                      </div>
+                      <StatusBadge online={device.isOnline} />
                     </div>
-
-                    <div>
-                      <p className="font-semibold text-slate-900 truncate text-lg">
-                        {device.deviceName}
-                      </p>
-                      <p className="text-sm text-indigo-600 font-medium mt-3 opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0 transition-all">
-                        View Settings →
-                      </p>
-                    </div>
+                    <p className="font-bold text-white text-xl tracking-tight truncate">{device.deviceName}</p>
+                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-2 group-hover:text-indigo-400 transition-colors">Configure System →</p>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          {/* ================= PRINT JOBS ================= */}
-          <div className="lg:col-span-1 space-y-6">
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-              Recent Jobs
-            </h2>
-
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden">
+          {/* RECENT JOBS */}
+          <div className="lg:col-span-4 space-y-8">
+            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-600">Recent Traffic</h3>
+            <div className="bg-white/[0.01] border border-white/5 rounded-[2.5rem] overflow-hidden backdrop-blur-sm">
               {jobs.length === 0 ? (
-                <EmptyState
-                  title="No Print Jobs Yet"
-                  description="Recent prints will appear here."
-                />
+                <div className="p-16 text-center text-slate-800 text-[10px] font-black uppercase">Idle</div>
               ) : (
-                <div className="divide-y divide-slate-100">
-                  {jobs.slice(0, 5).map((job) => (
-                    <div
-                      key={job.id}
-                      className="p-5 hover:bg-slate-50/50 transition-colors flex justify-between items-center"
-                    >
+                <div className="divide-y divide-white/5">
+                  {jobs.slice(0, 6).map((job) => (
+                    <div key={job.id} className="p-6 flex justify-between items-center hover:bg-white/[0.02] transition-colors">
                       <div>
-                        <p className="text-sm font-semibold text-slate-900">
-                          {job.copies} {job.copies === 1 ? "copy" : "copies"}{" "}
-                          <span className="text-slate-300 mx-1">•</span>{" "}
-                          <span className={job.color ? "text-indigo-600" : "text-slate-600"}>
-                            {job.color ? "Color" : "B/W"}
-                          </span>
-                        </p>
-                        <div className="inline-flex items-center mt-2 px-2 py-0.5 rounded-md bg-slate-100 text-[11px] font-semibold text-slate-600 uppercase tracking-wider">
-                          {job.status}
-                        </div>
+                        <p className="text-sm font-bold text-white mb-1.5">{job.copies} {job.copies === 1 ? 'Copy' : 'Copies'}</p>
+                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border ${job.color ? 'text-indigo-400 border-indigo-500/20 bg-indigo-500/5' : 'text-slate-500 border-white/10'}`}>
+                          {job.color ? 'Color' : 'B/W'} • {job.status}
+                        </span>
                       </div>
-
-                      <div className="text-right">
-                        <div className="text-base font-bold text-slate-900">
-                          ₹{job.amount / 100}
-                        </div>
-                      </div>
+                      <p className="text-sm font-black text-white">₹{job.amount / 100}</p>
                     </div>
                   ))}
-                  {jobs.length > 5 && (
-                    <div className="p-4 bg-slate-50/50 text-center border-t border-slate-100">
-                      <span className="text-sm font-medium text-indigo-600 hover:text-indigo-700 cursor-pointer">
-                        View all jobs
-                      </span>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
-      {/* ================= DEVICE MODAL ================= */}
+      {/* DEVICE MODAL */}
       {selectedDevice && (
-        <DeviceModal
-          device={selectedDevice}
-          onClose={() => setSelectedDevice(null)}
-        />
+        <DeviceModal device={selectedDevice} onClose={() => setSelectedDevice(null)} />
       )}
     </div>
   );
 }
 
-/* ================= COMPONENTS ================= */
+/* ================= REFINED COMPONENTS ================= */
 
-function StatCard({ icon, iconBg, title, value }) {
+function StatCard({ title, value, icon, color }) {
+  const themes = {
+    indigo: "border-indigo-500/20 text-indigo-500 bg-indigo-500/5",
+    emerald: "border-emerald-500/20 text-emerald-500 bg-emerald-500/5",
+    amber: "border-amber-500/20 text-amber-500 bg-amber-500/5"
+  };
+
   return (
-    <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden">
-      <div className="flex items-center gap-4 mb-4">
-        <div className={`p-3.5 rounded-2xl ${iconBg}`}>{icon}</div>
-        <span className="text-sm font-medium text-slate-500">{title}</span>
+    <div className={`border rounded-[3rem] p-10 relative overflow-hidden group transition-all hover:bg-white/[0.02] ${themes[color]}`}>
+      <div className="absolute -right-6 -top-6 opacity-[0.05] group-hover:scale-110 transition-transform duration-1000">
+        <div className="scale-[5]">{icon}</div>
       </div>
-      <div className="text-4xl font-bold tracking-tight text-slate-900">
-        {value}
-      </div>
+      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3">{title}</p>
+      <p className="text-5xl font-black text-white tracking-tighter">{value}</p>
     </div>
   );
 }
 
-function EmptyState({ title, description, buttonText, link }) {
+function StatusBadge({ online }) {
   return (
-    <div className="text-center py-16 px-6 bg-white border border-dashed border-slate-300 rounded-3xl">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 mb-4">
-        <Printer size={28} className="text-slate-400" />
-      </div>
-      <p className="text-lg font-semibold text-slate-900 mb-1">{title}</p>
-      <p className="text-sm text-slate-500 mb-8 max-w-sm mx-auto">
-        {description}
-      </p>
-
-      {buttonText && link && (
-        <Link
-          href={link}
-          className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-colors"
-        >
-          <Plus size={18} />
-          {buttonText}
-        </Link>
-      )}
+    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${online ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-slate-500/10 border-slate-500/20 text-slate-500'}`}>
+      <div className={`h-1.5 w-1.5 rounded-full ${online ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'}`} />
+      <span className="text-[10px] font-black uppercase tracking-tighter">{online ? "Active" : "Offline"}</span>
     </div>
   );
 }
@@ -318,123 +235,76 @@ function DeviceModal({ device, onClose }) {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this device? This action cannot be undone.")) {
-        return;
-    }
-
+    if (!window.confirm("Confirm decommissioning? This cannot be undone.")) return;
     setDeleting(true);
     try {
-      const res = await apiFetch(`/api/devices/${device.id}`, {
-        method: "DELETE",
-      });
-
+      const res = await apiFetch(`/api/devices/${device.id}`, { method: "DELETE" });
       if (res.ok) {
         onClose();
         window.location.reload();
-      } else {
-        alert("Failed to delete device");
       }
     } catch (err) {
       console.error(err);
-      alert("Error deleting device");
     } finally {
       setDeleting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-md rounded-[2rem] p-8 shadow-2xl relative animate-in zoom-in-95 duration-200">
-        <button
-          onClick={onClose}
-          className="absolute top-6 right-6 text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 rounded-full transition-colors cursor-pointer"
-        >
-          ✕
+    <div className="fixed inset-0 bg-[#05071a]/95 backdrop-blur-3xl flex items-center justify-center z-[100] p-6 animate-in fade-in duration-300">
+      <div className="bg-[#0b0f2a] w-full max-w-xl border border-white/10 rounded-[3.5rem] p-10 md:p-14 relative shadow-2xl animate-in zoom-in-95">
+        <button onClick={onClose} className="absolute top-10 right-10 text-slate-500 hover:text-white transition-colors p-2 bg-white/5 rounded-full">
+          <X size={20} />
         </button>
 
-        <div className="mb-8">
-          <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4">
-            <Printer size={24} />
+        <div className="flex items-center gap-6 mb-12">
+          <div className="p-5 bg-indigo-600 rounded-[2rem] shadow-2xl shadow-indigo-600/40">
+            <Printer className="text-white" size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
-            {device.deviceName}
-          </h2>
-          <p className="text-sm text-slate-500 mt-1">Device Configuration</p>
+          <div>
+            <h3 className="text-3xl font-black text-white tracking-tighter">{device.deviceName}</h3>
+            <div className="flex items-center gap-2 mt-1.5">
+               <Lock size={14} className="text-indigo-500" />
+               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Secure Terminal Node</p>
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-5 mb-8">
-          <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5 block">
-              Device ID
-            </label>
-            <div className="flex justify-between items-center bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl group hover:border-indigo-200 transition-colors">
-              <span className="text-sm font-mono text-slate-700">
-                {device.id}
-              </span>
-              <button
-                onClick={() => copy(device.id, "id")}
-                className="text-slate-400 hover:text-indigo-600 transition-colors p-1"
-                title="Copy ID"
-              >
-                {copiedId ? (
-                  <span className="text-xs font-semibold text-emerald-600">
-                    Copied!
-                  </span>
-                ) : (
-                  <Copy size={18} />
-                )}
+        <div className="space-y-8 mb-12">
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] ml-2">Device UUID</label>
+            <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-5 group hover:border-indigo-500/30 transition-all">
+              <code className="text-sm text-indigo-400 font-mono tracking-tight">{device.id}</code>
+              <button onClick={() => copy(device.id, "id")} className="text-slate-500 hover:text-white transition-colors">
+                {copiedId ? <span className="text-[10px] text-emerald-500 font-black">COPIED</span> : <Copy size={18} />}
               </button>
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5 block">
-              Auth Token
-            </label>
-            <div className="flex justify-between items-center bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl group hover:border-indigo-200 transition-colors">
-              <span className="text-xs font-mono text-slate-700 break-all pr-4 line-clamp-2">
-                {device.authToken}
-              </span>
-              <button
-                onClick={() => copy(device.authToken, "token")}
-                className="text-slate-400 hover:text-indigo-600 transition-colors p-1 shrink-0"
-                title="Copy Token"
-              >
-                {copiedToken ? (
-                  <span className="text-xs font-semibold text-emerald-600">
-                    Copied!
-                  </span>
-                ) : (
-                  <Copy size={18} />
-                )}
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] ml-2">Access Auth Token</label>
+            <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-5 group hover:border-indigo-500/30 transition-all">
+              <code className="text-[11px] text-slate-400 font-mono break-all line-clamp-1 pr-6">{device.authToken}</code>
+              <button onClick={() => copy(device.authToken, "token")} className="text-slate-500 hover:text-white transition-colors shrink-0">
+                {copiedToken ? <span className="text-[10px] text-emerald-500 font-black">COPIED</span> : <Copy size={18} />}
               </button>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <button
-            onClick={() =>
-              window.open(
-                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/qr/${device.id}`
-              )
-            }
-            className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 rounded-xl flex items-center justify-center gap-2 font-medium transition-all hover:-translate-y-0.5 active:translate-y-0 shadow-md cursor-pointer"
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <button 
+             onClick={() => window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/qr/${device.id}`)}
+             className="flex items-center justify-center gap-3 bg-white text-slate-900 py-5 rounded-[1.5rem] font-black uppercase tracking-widest text-xs hover:bg-indigo-50 transition-all active:scale-95"
           >
-            <Download size={18} />
-            Download QR Code
+            <Download size={18} strokeWidth={3} /> Get QR Code
           </button>
-
-          <button
-            onClick={handleDelete}
-            disabled={deleting}
-            className="w-full bg-red-50 hover:bg-red-100 text-red-600 py-3.5 rounded-xl flex items-center justify-center gap-2 font-medium transition-all border border-red-100 disabled:opacity-50 cursor-pointer"
+          <button 
+             onClick={handleDelete}
+             disabled={deleting}
+             className="flex items-center justify-center gap-3 bg-red-500/5 text-red-500 border border-red-500/10 py-5 rounded-[1.5rem] font-black uppercase tracking-widest text-xs hover:bg-red-500 hover:text-white transition-all active:scale-95"
           >
-            {deleting ? (
-              <Loader2 size={18} className="animate-spin" />
-            ) : (
-              <Trash2 size={18} />
-            )}
+            {deleting ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
             {deleting ? "Deleting..." : "Delete Device"}
           </button>
         </div>

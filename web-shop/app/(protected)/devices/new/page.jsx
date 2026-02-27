@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/lib/api";
-import { Loader2, Copy, Download, CheckCircle2, ArrowLeft, Printer } from "lucide-react";
+import { Loader2, Copy, Download, CheckCircle2, ArrowLeft, Printer, Shieldflex, Cpu, Globe, Lock } from "lucide-react";
 import Link from "next/link";
 
 export default function AddDevicePage() {
@@ -14,13 +14,11 @@ export default function AddDevicePage() {
   const [loading, setLoading] = useState(false);
   const [createdDevice, setCreatedDevice] = useState(null);
 
-  // UI state for copy feedback
   const [copiedId, setCopiedId] = useState(false);
   const [copiedToken, setCopiedToken] = useState(false);
 
   const createDevice = async () => {
     if (!deviceName.trim()) return;
-
     setLoading(true);
 
     try {
@@ -29,10 +27,7 @@ export default function AddDevicePage() {
         body: JSON.stringify({ deviceName }),
       });
 
-      if (!res.ok) {
-        console.error("Failed to register device");
-        return;
-      }
+      if (!res.ok) return;
 
       const data = await res.json();
       setCreatedDevice(data);
@@ -55,78 +50,62 @@ export default function AddDevicePage() {
   };
 
   /* =========================
-     SUCCESS VIEW
+      SUCCESS VIEW (The Receipt)
   ========================== */
   if (createdDevice) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 px-6 py-12 font-sans">
-        <div className="bg-white p-8 sm:p-10 rounded-[2rem] shadow-xl shadow-slate-200/50 w-full max-w-lg border border-slate-100 animate-in fade-in zoom-in-95 duration-300">
+      <div className="min-h-screen flex items-center justify-center bg-[#05071a] px-6 py-12 font-sans selection:bg-emerald-500/30">
+        <div className="relative w-full max-w-lg">
+          {/* Decorative Glow */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-indigo-600 rounded-[3rem] blur opacity-20" />
           
-          <div className="flex flex-col items-center text-center mb-8">
-            <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle2 size={32} />
+          <div className="relative bg-[#0b0f2a] border border-white/10 p-8 md:p-12 rounded-[3rem] shadow-2xl animate-in zoom-in-95 duration-500">
+            <div className="flex flex-col items-center text-center mb-10">
+              <div className="w-20 h-20 bg-emerald-500/10 text-emerald-500 rounded-3xl flex items-center justify-center mb-6 border border-emerald-500/20">
+                <CheckCircle2 size={40} strokeWidth={1.5} />
+              </div>
+              <h2 className="text-3xl font-black tracking-tight text-white italic">Node Deployed.</h2>
+              <p className="text-slate-500 mt-2 text-sm font-medium tracking-tight">
+                Secure credentials generated for <span className="text-emerald-400">{deviceName}</span>
+              </p>
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-              Device Registered!
-            </h2>
-            <p className="text-slate-500 mt-2 text-sm">
-              Your printer is ready to be configured.
-            </p>
-          </div>
 
-          <div className="space-y-5 mb-8">
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5 block">
-                Device ID
-              </label>
-              <div className="flex items-center justify-between bg-slate-50 border border-slate-200 px-4 py-3.5 rounded-xl group hover:border-indigo-200 transition-colors">
-                <span className="text-sm font-mono text-slate-700">{createdDevice.id}</span>
-                <button 
-                  onClick={() => copy(createdDevice.id, "id")}
-                  className="text-slate-400 hover:text-indigo-600 transition-colors"
-                >
-                  {copiedId ? <span className="text-xs font-semibold text-emerald-600">Copied!</span> : <Copy size={18} />}
-                </button>
+            <div className="space-y-6 mb-10">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">Hardware UUID</label>
+                <div className="flex items-center justify-between bg-white/5 border border-white/10 px-5 py-4 rounded-2xl group hover:border-emerald-500/30 transition-all">
+                  <code className="text-xs font-mono text-emerald-400">{createdDevice.id}</code>
+                  <button onClick={() => copy(createdDevice.id, "id")} className="text-slate-500 hover:text-white transition-colors">
+                    {copiedId ? <span className="text-[10px] font-black text-emerald-500">COPIED</span> : <Copy size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">Access Token</label>
+                <div className="flex items-center justify-between bg-white/5 border border-white/10 px-5 py-4 rounded-2xl group hover:border-emerald-500/30 transition-all">
+                  <code className="text-[10px] font-mono text-slate-400 break-all line-clamp-1 pr-6">{createdDevice.authToken}</code>
+                  <button onClick={() => copy(createdDevice.authToken, "token")} className="text-slate-500 hover:text-white transition-colors shrink-0">
+                    {copiedToken ? <span className="text-[10px] font-black text-emerald-500">COPIED</span> : <Copy size={18} />}
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5 block">
-                Auth Token
-              </label>
-              <div className="flex items-center justify-between bg-slate-50 border border-slate-200 px-4 py-3.5 rounded-xl group hover:border-indigo-200 transition-colors">
-                <span className="text-sm font-mono text-slate-700 break-all pr-4">
-                  {createdDevice.authToken}
-                </span>
-                <button 
-                  onClick={() => copy(createdDevice.authToken, "token")}
-                  className="text-slate-400 hover:text-indigo-600 transition-colors shrink-0"
-                >
-                  {copiedToken ? <span className="text-xs font-semibold text-emerald-600">Copied!</span> : <Copy size={18} />}
-                </button>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button
+                onClick={() => window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/qr/${createdDevice.id}`)}
+                className="bg-white text-slate-900 py-4 rounded-2xl flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-widest hover:bg-emerald-50 transition-all active:scale-95 shadow-lg cursor-pointer"
+              >
+                <Download size={16} strokeWidth={3} /> QR Poster
+              </button>
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="bg-white/5 border border-white/10 text-white py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95 cursor-pointer"
+              >
+                Return to Base
+              </button>
             </div>
-          </div>
-
-          <div className="space-y-3">
-            <button
-              onClick={() =>
-                window.open(
-                  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/qr/${createdDevice.id}`
-                )
-              }
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 rounded-xl flex items-center justify-center gap-2 font-medium transition-all shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
-            >
-              <Download size={18} />
-              Download QR Code
-            </button>
-
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="w-full bg-white border border-slate-200 py-3.5 rounded-xl text-slate-700 font-medium hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer"
-            >
-              Return to Dashboard
-            </button>
           </div>
         </div>
       </div>
@@ -134,64 +113,78 @@ export default function AddDevicePage() {
   }
 
   /* =========================
-     CREATE FORM
+      CREATE FORM (The Setup)
   ========================== */
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 font-sans">
+    <div className="min-h-screen flex flex-col bg-[#05071a] font-sans selection:bg-indigo-500/30">
       
-      {/* Optional minimal header for navigation context */}
-      <div className="p-6">
-        <Link href="/devices" className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
-          <ArrowLeft size={16} />
-          Back
+      <div className="p-8">
+        <Link href="/dashboard" className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-white transition-all group">
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Dashboard
         </Link>
       </div>
 
       <div className="flex-1 flex items-center justify-center px-6 pb-24">
-        <div className="bg-white p-8 sm:p-10 rounded-[2rem] shadow-xl shadow-slate-200/50 w-full max-w-md border border-slate-100 animate-in fade-in duration-300">
-          
-          <div className="mb-8">
-            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-5">
-              <Printer size={24} />
+        <div className="w-full max-w-md">
+          {/* Header Info */}
+          <div className="mb-12 text-center">
+            <div className="inline-flex p-4 bg-indigo-600/10 text-indigo-500 rounded-[2rem] border border-indigo-500/20 mb-6">
+              <Printer size={32} strokeWidth={1.5} />
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-              Add New Device
+            <h2 className="text-4xl font-black tracking-tighter text-white mb-3">
+              Deploy <span className="text-indigo-500">Node.</span>
             </h2>
-            <p className="text-slate-500 mt-2 text-sm">
-              Register a new printer to start accepting print jobs.
+            <p className="text-slate-500 text-sm font-medium tracking-tight max-w-[280px] mx-auto">
+              Initialize a new hardware endpoint for your Print-as-a-Service network.
             </p>
           </div>
 
-          <div className="mb-6">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
-              Device Name
-            </label>
-            <input
-              value={deviceName}
-              onChange={(e) => setDeviceName(e.target.value)}
-              placeholder="e.g. Front Desk Printer, Color Laser..."
-              className="w-full bg-slate-50 border border-slate-200 text-slate-900 px-4 py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder:text-slate-400"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') createDevice();
-              }}
-            />
+          {/* Form */}
+          <div className="bg-[#0b0f2a] border border-white/5 p-8 rounded-[3rem] shadow-2xl shadow-black/50">
+            <div className="mb-8 space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 ml-2">
+                Display Identifier
+              </label>
+              <input
+                value={deviceName}
+                onChange={(e) => setDeviceName(e.target.value)}
+                placeholder="e.g. TERMINAL_ALPHA"
+                className="w-full bg-white/[0.03] border border-white/10 text-white px-6 py-5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-700 font-bold"
+                onKeyDown={(e) => e.key === 'Enter' && createDevice()}
+              />
+            </div>
+
+            <button
+              onClick={createDevice}
+              disabled={loading || !deviceName.trim()}
+              className="group w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 text-white py-5 rounded-2xl flex items-center justify-center gap-3 text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-600/20 active:scale-95 cursor-pointer"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} />
+                  Initializing Node...
+                </>
+              ) : (
+                <>
+                  Register Hardware
+                  <Cpu size={18} className="opacity-50 group-hover:rotate-12 transition-transform" />
+                </>
+              )}
+            </button>
           </div>
 
-          <button
-            onClick={createDevice}
-            disabled={loading || !deviceName.trim()}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:hover:bg-indigo-600 text-white py-3.5 rounded-xl flex items-center justify-center gap-2 font-medium transition-all shadow-sm hover:shadow-md active:translate-y-0 hover:-translate-y-0.5 disabled:transform-none disabled:shadow-none"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="animate-spin" size={18} />
-                Registering...
-              </>
-            ) : (
-              "Register Device"
-            )}
-          </button>
-
+          {/* Feature List */}
+          <div className="mt-12 grid grid-cols-2 gap-6 opacity-30">
+            <div className="flex items-center gap-3">
+               <Globe size={14} className="text-slate-400" />
+               <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Global Sync</span>
+            </div>
+            <div className="flex items-center gap-3">
+               <Lock size={14} className="text-slate-400" />
+               <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">AES-256 Auth</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

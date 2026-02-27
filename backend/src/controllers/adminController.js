@@ -93,11 +93,16 @@ export async function getAdminJobs(req, res) {
         id: j.id,
         deviceId: j.deviceId,
         deviceName: j.Device?.deviceName || "Unknown Device",
-        fileName: j.fileUrl.split("/").pop(),
-        pages: 1, // extend later when page count is added
-        copies: j.copies,
+
+        fileName:
+          Array.isArray(j.files) && j.files.length > 0
+            ? j.files[0].originalName || "Unknown File"
+            : "Unknown File",
+
+        pages: j.totalPages || 1,
+        copies: j.copies || 1,
         colorMode: j.color ? "COLOR" : "BW",
-        price: j.amount / 100,
+        price: j.amount ? j.amount / 100 : 0,
         status: j.status,
         createdAt: j.createdAt,
       }))

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Printer } from "lucide-react";
+import { Printer, LayoutDashboard, Terminal } from "lucide-react";
 import { useUser, UserButton } from "@clerk/nextjs";
 
 export default function Navbar() {
@@ -10,63 +10,69 @@ export default function Navbar() {
   if (!isLoaded) return null;
 
   return (
-    <header className="w-full bg-gradient-to-br from-[#0b0f2a] via-[#14184a] to-[#1f2366]">
-      <div className="max-w-7xl mx-auto px-12 h-20 flex items-center justify-between">
-
-        {/* Logo */}
+    <nav className="sticky top-0 z-[100] w-full px-6 py-4 bg-[#0b0f2a]">
+      {/* Floating Glass Container */}
+      <div className="max-w-7xl mx-auto h-16 px-6 flex items-center justify-between bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-indigo-500/10 transition-all hover:border-indigo-500/30">
+        
+        {/* Logo Section */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-white font-semibold text-lg"
+          className="group flex items-center gap-3 text-white font-bold text-xl tracking-tight"
         >
-          <Printer
-            size={22}
-            strokeWidth={1.8}
-            className="text-indigo-400"
-          />
-          PrintInnovX
+          <div className="p-2 bg-indigo-600 rounded-xl transition-all group-hover:scale-110 group-hover:rotate-3 group-active:scale-95 shadow-lg shadow-indigo-500/20">
+            <Printer
+              size={20}
+              strokeWidth={2.5}
+              className="text-white"
+            />
+          </div>
+          <span className="hidden sm:block bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+            PrintInnovX
+          </span>
         </Link>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-6">
-
+        {/* Action Section */}
+        <div className="flex items-center gap-4">
           {!isSignedIn ? (
-            <>
-              {/* <Link
-                href="/download"
-                className="text-white text-sm hover:text-indigo-300 transition"
-              >
-                Download
-              </Link> */}
-
+            <div className="flex items-center">
               <Link
                 href="/register"
-                className="bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium px-5 py-2 rounded-md transition"
+                className="flex items-center gap-2 bg-white text-slate-900 text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-xl hover:bg-indigo-50 transition-all active:scale-95 shadow-lg shadow-white/5"
               >
+                <Terminal size={14} strokeWidth={3} />
                 Register Device
               </Link>
-            </>
+            </div>
           ) : (
-            <>
+            <div className="flex items-center gap-4">
+              {/* Internal Navigation Links */}
               <Link
                 href="/dashboard"
-                className="text-white text-sm hover:bg-indigo-700 transition bg-indigo-600 border-none rounded px-4 py-2"
+                className="flex items-center gap-2 text-slate-300 hover:text-white text-sm font-bold transition-all px-3 py-2 rounded-lg hover:bg-white/5"
               >
-                Dashboard
+                <LayoutDashboard size={18} className="text-indigo-400" />
+                <span className="hidden md:inline">Dashboard</span>
               </Link>
 
-              <UserButton
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    avatarBox: "w-9 h-9",
-                  },
-                }}
-              />
-            </>
-          )}
+              {/* Separator */}
+              <div className="h-6 w-px bg-white/10" />
 
+              {/* User Profile */}
+              <div className="flex items-center p-0.5 rounded-full border border-white/10 bg-white/5 hover:border-indigo-500/50 transition-colors">
+                <UserButton
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-8 h-8 rounded-full",
+                      userButtonPopoverCard: "rounded-2xl border border-slate-200 shadow-xl",
+                    },
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    </header>
+    </nav>
   );
 }

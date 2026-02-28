@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FileText, TrendingUp, Printer, Activity, Loader2 } from "lucide-react";
+import { FileText, TrendingUp, Printer, Activity } from "lucide-react";
 import StatCard from "./StatCard";
 import { fetchAdminStats } from "@/lib/api";
 
@@ -22,38 +22,41 @@ export default function StatsGrid() {
 
   if (!stats) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-32 bg-slate-100 animate-pulse rounded-[2rem]" />
+          <div 
+            key={i} 
+            className="h-40 bg-white/[0.03] border border-white/5 animate-pulse rounded-[2.5rem]" 
+          />
         ))}
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <StatCard 
         title="Total Jobs" 
         value={stats.totalJobs.toLocaleString()} 
-        icon={<FileText size={24} />} 
+        icon={<FileText size={20} />} 
         color="indigo"
       />
       <StatCard
         title="Total Revenue"
         value={`₹${stats.totalRevenue.toLocaleString()}`}
-        icon={<TrendingUp size={24} />}
+        icon={<TrendingUp size={20} />}
         color="emerald"
       />
       <StatCard
         title="Total Devices"
         value={stats.totalDevices}
-        icon={<Printer size={24} />}
+        icon={<Printer size={20} />}
         color="amber"
       />
       <StatCard
-        title="Online Devices"
+        title="Online Nodes"
         value={stats.onlineDevices}
-        icon={<Activity size={24} />}
+        icon={<Activity size={20} />}
         color="rose"
       />
     </div>

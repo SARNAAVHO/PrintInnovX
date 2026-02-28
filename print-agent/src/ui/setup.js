@@ -9,7 +9,8 @@ function Setup() {
 
   useEffect(() => {
     window.agentAPI.onLog((msg) => {
-      setLogs(prev => [...prev, msg]);
+      setLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
+      // Auto-scroll logic could be added here
     });
   }, []);
 
@@ -17,10 +18,8 @@ function Setup() {
     try {
       setStatus("loading");
       setError("");
-
       const base = "http://localhost:4000";
 
-      // 1️⃣ Authenticate
       const authRes = await fetch(`${base}/api/agent/auth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -29,14 +28,12 @@ function Setup() {
 
       if (authRes.error) throw new Error(authRes.error);
 
-      // 2️⃣ Register
       const regRes = await fetch(`${base}/api/agent/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deviceId })
       }).then(r => r.json());
 
-      // 3️⃣ Save config
       window.agentAPI.saveConfig({
         backendUrl: base,
         printerName: authRes.deviceName,
@@ -46,7 +43,6 @@ function Setup() {
         registrationToken: regRes.token
       });
 
-      // 4️⃣ Start agent
       window.agentAPI.startAgent();
       setStatus("running");
 
@@ -56,52 +52,61 @@ function Setup() {
     }
   }
 
-  /* ---------- LOG VIEW ---------- */
+  /* ---------- RUNNING VIEW (LOGS) ---------- */
   if (status === "running") {
-    return React.createElement(
-      "div",
-      { className: "card logs" },
-      React.createElement("h3", null, "Printer Running"),
-      React.createElement(
-        "div",
-        { className: "log-box" },
-        logs.map((l, i) =>
-          React.createElement("div", { key: i }, l)
+    return React.createElement("div", { className: "container" },
+      React.createElement("div", { className: "header" },
+        React.createElement("div", { className: "status-indicator active" }),
+        React.createElement("h2", null, "Agent Live")
+      ),
+      React.createElement("div", { className: "terminal-container" },
+        React.createElement("div", { className: "terminal-header" }, "System Output"),
+        React.createElement("div", { className: "log-box" },
+          logs.map((l, i) => React.createElement("div", { key: i, className: "log-line" }, l))
         )
-      )
+      ),
+      React.createElement("p", { className: "footer-text" }, "Agent is polling for jobs...")
     );
   }
 
   /* ---------- SETUP FORM ---------- */
-  return React.createElement(
-    "div",
-    { className: "card" },
-    React.createElement("h2", null, "Activate Printer"),
-    React.createElement("p", { className: "subtitle" },
-      "Enter the device credentials provided by admin"
-    ),
+  return React.createElement("div", { className: "container" },
+    React.createElement("div", { className: "branding" }, "Aetheriox"),
+    React.createElement("div", { className: "card" },
+      React.createElement("h2", null, "Activate Node"),
+      React.createElement("p", { className: "subtitle" }, "Sync hardware with cloud dashboard"),
+      
+      React.createElement("div", { className: "input-group" },
+        React.createElement("label", null, "Device Identity"),
+        React.createElement("input", {
+          placeholder: "Enter Device ID",
+          value: deviceId,
+          onChange: e => setDeviceId(e.target.value)
+        })
+      ),
 
-    React.createElement("input", {
-      placeholder: "Device ID",
-      value: deviceId,
-      onChange: e => setDeviceId(e.target.value)
-    }),
+      React.createElement("div", { className: "input-group" },
+        React.createElement("label", null, "Security Token"),
+        React.createElement("input", {
+          type: "password",
+          placeholder: "••••••••••••",
+          value: authToken,
+          onChange: e => setAuthToken(e.target.value)
+        })
+      ),
 
-    React.createElement("input", {
-      type: "password",
-      placeholder: "Device Auth Token",
-      value: authToken,
-      onChange: e => setAuthToken(e.target.value)
-    }),
+      React.createElement("button", {
+        className: status === "loading" ? "btn-loading" : "",
+        onClick: activate,
+        disabled: status === "loading"
+      }, status === "loading" ? "Establishing Link..." : "Initialize Agent"),
 
-    React.createElement("button", {
-      onClick: activate,
-      disabled: status === "loading"
-    }, status === "loading" ? "Activating..." : "Activate Printer"),
-
-    error && React.createElement("p", { className: "error" }, error)
+      error && React.createElement("div", { className: "error-box" }, 
+        React.createElement("span", null, "⚠️"), 
+        error
+      )
+    )
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root"))
-  .render(React.createElement(Setup));
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(Setup));

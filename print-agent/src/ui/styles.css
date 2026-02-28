@@ -1,165 +1,151 @@
-/* ---------- GLOBAL ---------- */
 :root {
-  --bg: #f7f8fb;
-  --card: #ffffff;
-  --text: #0f172a;
-  --muted: #64748b;
-  --border: #e5e7eb;
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --danger: #ef4444;
-  --radius: 16px;
-}
-
-* {
-  box-sizing: border-box;
+  --bg: #05071a;
+  --card-bg: #0b0f2a;
+  --accent: #6366f1;
+  --text-main: #ffffff;
+  --text-dim: #94a3b8;
+  --error: #ef4444;
+  --success: #10b981;
 }
 
 body {
   margin: 0;
-  background: radial-gradient(1200px 600px at top, #eef2ff, var(--bg));
-  font-family: Inter, system-ui, -apple-system, sans-serif;
-  color: var(--text);
-}
-
-/* ---------- LAYOUT ---------- */
-#root {
-  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-main);
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 24px;
+  align-items: center;
+  min-height: 100vh;
+  -webkit-user-select: none; /* Prevents text selection in Electron */
 }
 
-/* ---------- CARD ---------- */
-.card {
-  width: 380px;
-  background: linear-gradient(180deg, #ffffff, #fafafa);
-  padding: 28px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  box-shadow:
-    0 20px 40px rgba(15, 23, 42, 0.08),
-    inset 0 1px 0 rgba(255,255,255,0.6);
-  animation: fadeUp 0.5s ease;
+.container {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ---------- HEADINGS ---------- */
-.card h2 {
-  margin: 0 0 4px;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.card h3 {
-  margin: 0 0 6px;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.subtitle {
-  font-size: 13px;
-  color: var(--muted);
+.branding {
+  text-align: center;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 2px;
+  color: var(--accent);
   margin-bottom: 20px;
+  text-transform: uppercase;
+  font-size: 12px;
 }
 
-/* ---------- INPUTS ---------- */
+.card {
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.subtitle { color: var(--text-dim); font-size: 13px; margin: 8px 0 24px 0; }
+
+.input-group { margin-bottom: 16px; }
+.input-group label { 
+  display: block; 
+  font-size: 10px; 
+  font-weight: 800; 
+  text-transform: uppercase; 
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
 input {
   width: 100%;
-  padding: 12px 14px;
-  margin-bottom: 14px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
   border-radius: 12px;
-  border: 1px solid var(--border);
-  background: #fff;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-input::placeholder {
-  color: #94a3b8;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  transition: all 0.2s;
 }
 
 input:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.07);
 }
 
-/* ---------- BUTTON ---------- */
 button {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(180deg, var(--primary), var(--primary-hover));
-  color: #fff;
+  background: var(--accent);
+  color: white;
   border: none;
+  padding: 14px;
   border-radius: 14px;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s ease;
+  margin-top: 10px;
+  transition: transform 0.1s;
 }
 
-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.35);
+button:active { transform: scale(0.98); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.error-box {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: var(--error);
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-button:active:not(:disabled) {
-  transform: translateY(0);
+/* LOG VIEW STYLES */
+.header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.status-indicator { width: 10px; height: 10px; border-radius: 50%; }
+.status-indicator.active { 
+  background: var(--success); 
+  box-shadow: 0 0 10px var(--success);
+  animation: pulse 2s infinite;
 }
 
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.terminal-container {
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* ---------- ERROR ---------- */
-.error {
-  margin-top: 12px;
-  padding: 10px 12px;
-  font-size: 13px;
-  color: var(--danger);
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 10px;
-}
-
-/* ---------- LOG VIEW ---------- */
-.logs {
-  width: 620px;
+.terminal-header {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px 12px;
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-weight: 800;
 }
 
 .log-box {
-  margin-top: 12px;
-  height: 320px;
-  background: linear-gradient(180deg, #0b0b0b, #050505);
-  color: #e5e7eb;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12px;
-  padding: 14px;
-  border-radius: 14px;
-  border: 1px solid #1f2933;
+  height: 250px;
   overflow-y: auto;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+  padding: 12px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px;
+  color: #a5f3fc; /* Cyan-ish for that hacker feel */
 }
 
-.log-box::-webkit-scrollbar {
-  width: 6px;
-}
+.log-line { margin-bottom: 4px; border-bottom: 1px solid rgba(255, 255, 255, 0.02); padding-bottom: 2px; }
 
-.log-box::-webkit-scrollbar-thumb {
-  background: #374151;
-  border-radius: 6px;
+.footer-text { text-align: center; color: var(--text-dim); font-size: 11px; margin-top: 15px; }
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }

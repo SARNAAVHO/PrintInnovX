@@ -8,68 +8,62 @@ datasource db {
 }
 
 model Shop {
-  id          String   @id @default(uuid())
-  clerkUserId String   @unique
-  ownerName   String
-  shopName    String
-
-  createdAt   DateTime @default(now())
-
-  devices     Device[]
+  id                String   @id @default(uuid())
+  clerkUserId       String   @unique
+  ownerName         String
+  shopName          String
+  createdAt         DateTime @default(now())
+  priceBW           Float    @default(0)
+  priceColor        Float    @default(0)
+  razorpayKeyId     String?
+  razorpayKeySecret String?
+  devices           Device[]
 }
 
 model Device {
-  id         String   @id @default(uuid())
-  shopId     String
-
+  id         String     @id @default(uuid())
   shopName   String
   deviceName String
   authToken  String
-  isActive   Boolean  @default(true)
-
-  isOnline   Boolean  @default(false)
+  isActive   Boolean    @default(true)
+  createdAt  DateTime   @default(now())
+  isOnline   Boolean    @default(false)
   lastSeenAt DateTime?
-
-  createdAt  DateTime @default(now())
-
-  shop       Shop     @relation(fields: [shopId], references: [id])
+  shopId     String
+  shop       Shop       @relation(fields: [shopId], references: [id])
   printJobs  PrintJob[]
 }
 
 model PrintJob {
-  id                 String    @id @default(uuid())
-  deviceId           String
-  files              Json
-  copies             Int
-  totalPages         Int @default(1)
-  color              Boolean
-  status             JobStatus @default(CREATED)
-
-  amount             Int
-  currency           String    @default("INR")
-  razorpayOrderId    String?
+  id                String    @id @default(uuid())
+  deviceId          String
+  copies            Int
+  color             Boolean
+  status            JobStatus @default(CREATED)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  amount            Int
+  currency          String    @default("INR")
+  razorpayOrderId   String?
   razorpayPaymentId String?
+  totalPages        Int       @default(1)
+  files             Json
+  Device            Device    @relation(fields: [deviceId], references: [id])
+}
 
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-
-  Device             Device    @relation(fields: [deviceId], references: [id])
+model Admin {
+  id          String    @id @default(uuid())
+  clerkUserId String    @unique
+  email       String
+  role        String    @default("ADMIN")
+  createdAt   DateTime  @default(now())
+  lastLoginAt DateTime?
 }
 
 enum JobStatus {
   CREATED
-  PAID
   PRINTING
   PRINTED
   FAILED
-}
-
-model Admin {
-  id          String   @id @default(uuid())
-  clerkUserId String   @unique
-  email       String
-  role        String   @default("ADMIN")
-
-  createdAt   DateTime @default(now())
-  lastLoginAt DateTime?
+  PAID
 }

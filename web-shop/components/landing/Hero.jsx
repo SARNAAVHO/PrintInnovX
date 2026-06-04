@@ -1,10 +1,10 @@
 "use client";
 
-import { Download, ArrowRight, Sparkles, ShieldCheck, Zap, Printer } from "lucide-react";
+import { Download, ArrowRight, Sparkles, QrCode } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#0b0f2a] text-white">
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#0b0f2a] text-white pt-20">
       {/* Dynamic Background Blurs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] animate-pulse" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px]" />
@@ -22,9 +22,9 @@ export default function Hero() {
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] tracking-tight">
-            QR-Based <br />
+            Your Printer, <br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-              Cloud Printing
+              Now Smarter
             </span>
           </h1>
 
@@ -57,22 +57,21 @@ export default function Hero() {
           {/* Abstract Glow behind image */}
           <div className="absolute -inset-4 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-[2.5rem] opacity-20 blur-2xl group-hover:opacity-40 transition-opacity duration-500" />
           
-          <div className="relative rounded-[2.5rem] p-3 bg-white/5 border border-white/10 backdrop-blur-2xl shadow-2xl overflow-hidden transform group-hover:-rotate-1 group-hover:scale-[1.02] transition-all duration-700">
+          <div className="relative rounded-[2.5rem] p-3 bg-white/5 border border-white/10 backdrop-blur-2xl shadow-2xl overflow-hidden transform group-hover:-rotate-1 group-hover:scale-[1.02] transition-all duration-700 w-7/8">
             <img
-              src="/images/Printer.png"
+              src="/images/Printer1.png"
               alt="Printer preview"
-              className="rounded-[1.8rem] w-full h-auto object-cover shadow-inner"
+              className="rounded-[1.8rem] h-auto object-cover shadow-inner"
             />
             
             {/* Floating UI Element (Optional Overlays) */}
             <div className="absolute bottom-7 left-10 right-10 p-2 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl hidden md:block animate-bounce-slow">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 px-2">
                 <div className="p-2 bg-indigo-500 rounded-lg">
-                  <Printer size={20} />
+                  <QrCode size={20} />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Status</p>
-                  <p className="text-sm font-bold text-white leading-none">Job Printed Successfully</p>
+                  <p className="text-xl font-bold text-white leading-none py-4">QR Based Cloud Printing</p>
                 </div>
               </div>
             </div>

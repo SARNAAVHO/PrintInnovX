@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useApi } from "@/lib/api";
 import Link from "next/link";
 import {
@@ -70,12 +71,33 @@ export default function DashboardPage() {
       {/* ================= HEADER (Now Full Width) ================= */}
       <header className="px-6 md:px-12 h-20 flex items-center justify-between border-b border-white/5 sticky top-0 bg-[#05071a]/80 backdrop-blur-md z-40">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/20">
-              <Printer size={20} className="text-white" />
-            </div>
-            <span className="text-xl font-black tracking-tighter hidden sm:block">PrintInnovX</span>
-          </Link>
+          {/* Logo Section */}
+        <Link
+          href="/"
+          className="group flex items-center gap-3 tracking-tight outline-none shrink-0"
+        >
+          {/* Icon Logo - Scaled down to match wordmark */}
+          <Image 
+            src="/images/PXlogo.png" 
+            alt="Icon" 
+            width={40} 
+            height={40} 
+            className="rounded-lg object-contain" 
+            priority
+          />
+          
+          {/* Wordmark Logo - Fixed height, automatic width */}
+          <div className="h-8 flex items-center"> 
+            <Image 
+              src="/images/PX.png" 
+              alt="PrintInnovX" 
+              width={120} // Overestimate width to prevent capping
+              height={32} // Match the container height
+              className="hidden sm:block h-3/4 w-auto object-contain"
+              priority 
+            />
+          </div>
+        </Link>
           <div className="h-6 w-px bg-white/10 hidden md:block" />
           <div className="hidden md:flex items-center gap-3">
             <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Dashboard</h2>

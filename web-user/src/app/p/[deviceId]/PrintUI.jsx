@@ -65,7 +65,10 @@ export default function PrintUI({ printer, deviceId }) {
     return sum + Math.max(0, to - from + 1) * copies;
   }, 0);
 
-  const ratePerPage = colorMode === "color" ? 10 : 5;
+  const ratePerPage =
+  colorMode === "color"
+    ? printer.priceColor
+    : printer.priceBW;
   const totalPrice = totalPages * ratePerPage;
 
   async function handlePrint() {
@@ -98,7 +101,7 @@ export default function PrintUI({ printer, deviceId }) {
       }
 
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        key: job.razorpayKeyId,
         amount: job.amount,
         currency: job.currency,
         name: "PrintInnovX",
@@ -205,8 +208,8 @@ export default function PrintUI({ printer, deviceId }) {
                <p className="text-sm font-black uppercase tracking-tight">Mode</p>
                <div className="grid grid-cols-2 gap-3">
                   {[
-                    { id: 'bw', label: 'B/W', price: '₹5' },
-                    { id: 'color', label: 'Color', price: '₹10' }
+                    { id: 'bw', label: 'B/W', price: `₹${printer?.priceBW ?? 5}` },
+                    { id: 'color', label: 'Color', price: `₹${printer?.priceColor ?? 10}` }
                   ].map((mode) => (
                     <button
                       key={mode.id}

@@ -13,12 +13,14 @@ import {
   Info,
   Server
 } from "lucide-react";
+import Navbar from "@/components/layout/Navbar";
 
 export default function DownloadPage() {
   return (
     <div className="min-h-screen bg-[#0b0f2a] text-white font-sans selection:bg-indigo-500/30">
       {/* HEADER */}
-      <nav className="sticky top-0 z-[100] w-full px-6 py-4">
+      <Navbar/>
+      {/* <nav className="sticky top-0 z-[100] w-full px-6 py-4">
         <div className="max-w-7xl mx-auto h-16 px-6 flex items-center justify-between bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-indigo-500/5">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-indigo-600 rounded-lg">
@@ -35,10 +37,10 @@ export default function DownloadPage() {
             Back to Home
           </Link>
         </div>
-      </nav>
+      </nav> */}
 
       {/* HERO */}
-      <section className="relative pt-24 pb-16 px-6">
+      <section className="relative pt-28 pb-16 px-6">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6">

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Printer, LayoutDashboard, Terminal } from "lucide-react";
+import { LayoutDashboard, Terminal } from "lucide-react";
 import { useUser, UserButton } from "@clerk/nextjs";
+import Image from "next/image";
 
 export default function Navbar() {
   const { isSignedIn, isLoaded } = useUser();
@@ -10,25 +11,36 @@ export default function Navbar() {
   if (!isLoaded) return null;
 
   return (
-    <nav className="sticky top-0 z-[100] w-full px-6 py-4 bg-[#0b0f2a]">
+    <nav className="fixed top-0 z-[100] w-full px-6 py-4 pointers-even-auto">
       {/* Floating Glass Container */}
-      <div className="max-w-7xl mx-auto h-16 px-6 flex items-center justify-between bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-indigo-500/10 transition-all hover:border-indigo-500/30">
+      <div className="max-w-7xl mx-auto h-16 px-6 flex items-center justify-between bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-indigo-500/10 transition-all hover:border-indigo-500/30 pointers-even-auto">
         
         {/* Logo Section */}
         <Link
           href="/"
-          className="group flex items-center gap-3 text-white font-bold text-xl tracking-tight"
+          className="group flex items-center gap-3 tracking-tight outline-none shrink-0"
         >
-          <div className="p-2 bg-indigo-600 rounded-xl transition-all group-hover:scale-110 group-hover:rotate-3 group-active:scale-95 shadow-lg shadow-indigo-500/20">
-            <Printer
-              size={20}
-              strokeWidth={2.5}
-              className="text-white"
+          {/* Icon Logo - Scaled down to match wordmark */}
+          <Image 
+            src="/images/PXlogo.png" 
+            alt="Icon" 
+            width={40} 
+            height={40} 
+            className="rounded-lg object-contain" 
+            priority
+          />
+          
+          {/* Wordmark Logo - Fixed height, automatic width */}
+          <div className="h-8 flex items-center"> 
+            <Image 
+              src="/images/PX.png" 
+              alt="PrintInnovX" 
+              width={120} // Overestimate width to prevent capping
+              height={32} // Match the container height
+              className="hidden sm:block h-3/4 w-auto object-contain"
+              priority 
             />
           </div>
-          <span className="hidden sm:block bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-            PrintInnovX
-          </span>
         </Link>
 
         {/* Action Section */}

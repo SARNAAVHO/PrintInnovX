@@ -1,5 +1,5 @@
 import prisma from "../prisma.js";
-import razorpay from "../utils/razorpay.js";
+import Razorpay from "razorpay";
 
 /**
  * USER → Create PAID print job
@@ -21,8 +21,9 @@ export async function createPaidPrintJob(data) {
     throw new Error("At least one file is required");
   }
 
-  if (!deviceId) throw new Error("deviceId is required");
-  // if (!fileId) throw new Error("fileId is required");
+  if (!deviceId) {
+    throw new Error("deviceId is required");
+  }
 
   if (!Number.isInteger(totalPages) || totalPages <= 0) {
     throw new Error("totalPages must be a positive integer");
@@ -32,39 +33,98 @@ export async function createPaidPrintJob(data) {
     throw new Error("copies must be greater than 0");
   }
 
-  // 💰 FINAL pricing logic (authoritative)
-  const pricePerPage = color ? 10 : 5; // INR
-  const amount = pricePerPage * totalPages * 100; // paise
+  /* ===========================
+     LOAD DEVICE + SHOP
+  =========================== */
+  const device = await prisma.device.findUnique({
+    where: { id: deviceId },
+    include: {
+      shop: true,
+    },
+  });
 
-  // 1️⃣ Create job
+  if (!device) {
+    throw new Error("Device not found");
+  }
+
+  if (!device.shop) {
+    throw new Error("Shop not found");
+  }
+
+  /* ===========================
+     SHOP PRICING
+  =========================== */
+  const pricePerPage = color
+    ? device.shop.priceColor
+    : device.shop.priceBW;
+
+  if (!pricePerPage || pricePerPage <= 0) {
+    throw new Error(
+      "Shop pricing is not configured"
+    );
+  }
+
+  const amount =
+    Math.round(pricePerPage * totalPages * copies * 100);
+
+  /* ===========================
+     SHOP RAZORPAY ACCOUNT
+  =========================== */
+  if (
+    !device.shop.razorpayKeyId ||
+    !device.shop.razorpayKeySecret
+  ) {
+    throw new Error(
+      "This shop has not configured Razorpay yet"
+    );
+  }
+
+  const shopRazorpay = new Razorpay({
+    key_id: device.shop.razorpayKeyId,
+    key_secret: device.shop.razorpayKeySecret,
+  });
+
+  /* ===========================
+     CREATE JOB
+  =========================== */
   const job = await prisma.printJob.create({
     data: {
       deviceId,
       files,
       copies,
       color,
-      totalPages,               // ✅ STORE THIS
+      totalPages,
       amount,
       status: "CREATED",
     },
   });
 
-  // 2️⃣ Create Razorpay order
-  const order = await razorpay.orders.create({
+  /* ===========================
+     CREATE RAZORPAY ORDER
+  =========================== */
+  const order = await shopRazorpay.orders.create({
     amount,
     currency: "INR",
     receipt: job.id,
   });
 
-  // 3️⃣ Save order ID
+  /* ===========================
+     SAVE ORDER ID
+  =========================== */
   await prisma.printJob.update({
     where: { id: job.id },
-    data: { razorpayOrderId: order.id },
+    data: {
+      razorpayOrderId: order.id,
+    },
   });
 
   return {
     jobId: job.id,
     razorpayOrderId: order.id,
+
+    // frontend uses this key
+    razorpayKeyId: device.shop.razorpayKeyId,
+
     amount,
     currency: "INR",
   };
@@ -87,27 +147,29 @@ export async function getNextJobForDevice(deviceId) {
       createdAt: "asc",
     },
     include: {
-      Device: true, // 👈 JOIN DEVICE
+      Device: true,
     },
   });
 
-  if (!job) return null;
+  if (!job) {
+    return null;
+  }
 
-  // 🔒 Lock job
   await prisma.printJob.update({
-    where: { id: job.id },
-    data: { status: "PRINTING" },
+    where: {
+      id: job.id,
+    },
+    data: {
+      status: "PRINTING",
+    },
   });
 
-  // ✅ RETURN SHAPED PAYLOAD FOR AGENT
   return {
     id: job.id,
     files: job.files,
     copies: job.copies,
     totalPages: job.totalPages,
     color: job.color,
-
-    // 🔑 THIS IS THE FIX
     printerName: job.Device.deviceName,
   };
 }
@@ -125,7 +187,11 @@ export async function updateJobStatus(jobId, status) {
   }
 
   return prisma.printJob.update({
-    where: { id: jobId },
-    data: { status },
+    where: {
+      id: jobId,
+    },
+    data: {
+      status,
+    },
   });
 }

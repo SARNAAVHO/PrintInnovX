@@ -87,7 +87,7 @@ export default function DownloadPage() {
               </div>
 
               <a
-                href="/agents/printcloud-agent-windows.exe"
+                href="/agents/PrintInnovX Agent-Setup-1.0.0.exe"
                 className="inline-flex items-center justify-center gap-4 bg-white text-slate-900 px-12 py-6 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-indigo-50 transition-all active:scale-95 shadow-2xl shadow-indigo-500/10"
                 download
               >

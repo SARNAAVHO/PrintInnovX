@@ -11,7 +11,7 @@ import {
   CreditCard,
   Loader2
 } from "lucide-react";
-import { PDFDocument } from "pdf-lib";
+// import { PDFDocument } from "pdf-lib";
 import { uploadFile } from "../../lib/upload";
 import { apiFetch } from "../../lib/api";
 
@@ -38,22 +38,22 @@ export default function PrintUI({ printer, deviceId }) {
 
   async function handleSelect(e) {
     const selectedFiles = Array.from(e.target.files || []);
+
     if (!selectedFiles.length) return;
 
     const processed = [];
+
     for (const f of selectedFiles) {
-      if (f.type === "application/pdf") {
-        const buffer = await f.arrayBuffer();
-        const pdfDoc = await PDFDocument.load(buffer);
-        processed.push({ file: f, pages: pdfDoc.getPageCount() });
-      } else {
-        processed.push({ file: f, pages: 1 });
-      }
+      processed.push({
+        file: f,
+        pages: 1,
+      });
     }
+
     setFiles((prev) => [...prev, ...processed]);
     setPageMode("all");
     setStartPage(1);
-    setEndPage(Math.max(...processed.map((f) => f.pages)));
+    setEndPage(1);
   }
 
   const removeFile = (index) => setFiles((prev) => prev.filter((_, i) => i !== index));

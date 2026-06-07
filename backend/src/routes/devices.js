@@ -83,7 +83,6 @@ router.delete("/:deviceId", requireAuth, async (req, res) => {
     const clerkUserId = req.clerkUserId;
     const { deviceId } = req.params;
 
-    // Find shop of logged-in user
     const shop = await prisma.shop.findUnique({
       where: { clerkUserId },
     });
@@ -92,7 +91,6 @@ router.delete("/:deviceId", requireAuth, async (req, res) => {
       return res.status(404).json({ error: "Shop not found" });
     }
 
-    // Check device belongs to this shop
     const device = await prisma.device.findFirst({
       where: {
         id: deviceId,
@@ -104,15 +102,24 @@ router.delete("/:deviceId", requireAuth, async (req, res) => {
       return res.status(404).json({ error: "Device not found" });
     }
 
-    // Delete device
-    await prisma.device.delete({
-      where: { id: deviceId },
-    });
+    await prisma.$transaction([
+      prisma.printJob.deleteMany({
+        where: {
+          deviceId,
+        },
+      }),
+
+      prisma.device.delete({
+        where: {
+          id: deviceId,
+        },
+      }),
+    ]);
 
     res.json({ message: "Device deleted successfully" });
 
   } catch (err) {
-    console.error("Delete device error:", err);
+    console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 });

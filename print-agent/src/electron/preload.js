@@ -4,6 +4,10 @@ import path from "path";
 
 const CONFIG_PATH = path.resolve("config/agent.json");
 
+contextBridge.exposeInMainWorld("config", {
+  API_BASE_URL: process.env.API_BASE_URL
+});
+
 contextBridge.exposeInMainWorld("agentAPI", {
   saveConfig(config) {
     fs.mkdirSync(path.dirname(CONFIG_PATH), { recursive: true });

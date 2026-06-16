@@ -1,4 +1,4 @@
-const base = import.meta.env.API_BASE_URL;
+const base = window.config.API_BASE_URL;
 
 export async function activateAgent(deviceId, authToken) {
   // const base = "http://localhost:4000";

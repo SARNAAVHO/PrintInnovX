@@ -1,5 +1,7 @@
+const base = import.meta.env.VITE_API_BASE_URL;
+
 export async function activateAgent(deviceId, authToken) {
-  const base = "http://localhost:4000";
+  // const base = "http://localhost:4000";
 
   // 1️⃣ Auth → agentToken
   const authRes = await fetch(`${base}/api/agent/auth`, {

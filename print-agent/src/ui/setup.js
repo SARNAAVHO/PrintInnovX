@@ -18,7 +18,7 @@ function Setup() {
     try {
       setStatus("loading");
       setError("");
-      const base = "http://localhost:4000";
+      const base = import.meta.env.API_BASE_URL;
 
       const authRes = await fetch(`${base}/api/agent/auth`, {
         method: "POST",

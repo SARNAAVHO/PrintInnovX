@@ -2,6 +2,9 @@ import { contextBridge, ipcRenderer } from "electron";
 import fs from "fs";
 import path from "path";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 const CONFIG_PATH = path.resolve("config/agent.json");
 
 contextBridge.exposeInMainWorld("config", {

@@ -9,21 +9,50 @@ const DOWNLOAD_DIR = path.resolve("jobs");
 let isWorking = false;
 
 /**
- * 🚀 Start polling for jobs
+ * 📖 Read agent configuration
  */
-export function startJobPoller() {
-  // 🧹 Clean jobs dir on startup
-  if (fs.existsSync(DOWNLOAD_DIR)) {
-    fs.rmSync(DOWNLOAD_DIR, { recursive: true, force: true });
-  }
-  fs.mkdirSync(DOWNLOAD_DIR, { recursive: true });
+function getConfig() {
+  const configPath = path.resolve("config/agent.json");
 
-  const pollInterval = 5000; // 5 seconds
-  setInterval(pollOnce, pollInterval);
+  if (!fs.existsSync(configPath)) {
+    throw new Error("Agent configuration not found.");
+  }
+
+  return JSON.parse(fs.readFileSync(configPath, "utf8"));
 }
 
 /**
- * 🔁 Poll backend once
+ * 🔐 Read agent token
+ */
+function getToken() {
+  return getConfig().agentToken;
+}
+
+/**
+ * 🌐 Read backend URL
+ */
+function getBackendUrl() {
+  return getConfig().backendUrl;
+}
+
+/**
+ * 🚀 Start polling
+ */
+export function startJobPoller() {
+  // Clean download folder
+  if (fs.existsSync(DOWNLOAD_DIR)) {
+    fs.rmSync(DOWNLOAD_DIR, { recursive: true, force: true });
+  }
+
+  fs.mkdirSync(DOWNLOAD_DIR, { recursive: true });
+
+  console.log("📡 Job poller started");
+
+  setInterval(pollOnce, 5000);
+}
+
+/**
+ * 🔁 Poll backend
  */
 async function pollOnce() {
   if (isWorking) return;
@@ -32,54 +61,66 @@ async function pollOnce() {
   const downloadedFiles = [];
 
   try {
-    const res = await apiRequest("/api/jobs/next", "POST", getToken());
+    isWorking = true;
+
+    const res = await apiRequest(
+      "/api/jobs/next",
+      "POST",
+      getToken()
+    );
+
     job = res.job;
+
     if (!job) return;
 
-    isWorking = true;
-    console.log("🖨️ New job received:", job.id);
+    console.log(`🖨️ New job received: ${job.id}`);
 
     const printer = getPrinter();
 
-    // 🔁 PRINT EACH FILE
     for (const file of job.files) {
       const filePath = await downloadJobFile(job.id, file.fileId);
+
       downloadedFiles.push(filePath);
 
       await printer(job, filePath);
 
-      // 🧹 cleanup per file
-      fs.unlinkSync(filePath);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
     }
 
-    // ✅ Mark job PRINTED only if all succeed
     await apiRequest(
       `/api/jobs/${job.id}/status`,
       "PATCH",
       getToken(),
-      { status: "PRINTED" }
+      {
+        status: "PRINTED"
+      }
     );
 
-    console.log("✅ Job printed:", job.id);
+    console.log(`✅ Job printed: ${job.id}`);
 
   } catch (err) {
     console.error("❌ Job processing failed:", err.message);
 
-    // Keep files for debugging
-    downloadedFiles.forEach((f) => {
-      if (fs.existsSync(f)) {
-        console.warn("⚠️ Retained:", f);
+    if (job?.id) {
+      try {
+        await apiRequest(
+          `/api/jobs/${job.id}/status`,
+          "PATCH",
+          getToken(),
+          {
+            status: "FAILED"
+          }
+        );
+      } catch {}
+    }
+
+    downloadedFiles.forEach(file => {
+      if (fs.existsSync(file)) {
+        console.warn("⚠️ Retained for debugging:", file);
       }
     });
-
-    if (job?.id) {
-      await apiRequest(
-        `/api/jobs/${job.id}/status`,
-        "PATCH",
-        getToken(),
-        { status: "FAILED" }
-      );
-    }
 
   } finally {
     isWorking = false;
@@ -87,34 +128,35 @@ async function pollOnce() {
 }
 
 /**
- * 📥 Download print file (RAM-only → disk)
+ * 📥 Download print file
  */
 async function downloadJobFile(jobId, fileId) {
+  const backendUrl = getBackendUrl();
   const token = getToken();
 
-  const res = await fetch(
-    `http://localhost:4000/api/upload/${fileId}`,
+  const response = await fetch(
+    `${backendUrl}/api/upload/${fileId}`,
     {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     }
   );
 
-  if (!res.ok) {
-    throw new Error("Failed to download file");
+  if (!response.ok) {
+    throw new Error(
+      `Failed to download file (${response.status})`
+    );
   }
 
-  const filePath = path.join(DOWNLOAD_DIR, `${jobId}-${fileId}.pdf`);
-  const buffer = Buffer.from(await res.arrayBuffer());
+  const filePath = path.join(
+    DOWNLOAD_DIR,
+    `${jobId}-${fileId}.pdf`
+  );
+
+  const buffer = Buffer.from(await response.arrayBuffer());
 
   fs.writeFileSync(filePath, buffer);
-  return filePath;
-}
 
-/**
- * 🔐 Read agent token
- */
-function getToken() {
-  const configPath = path.resolve("config/agent.json");
-  const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-  return config.agentToken;
+  return filePath;
 }

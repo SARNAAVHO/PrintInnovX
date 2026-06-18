@@ -5,10 +5,13 @@ import { fileURLToPath } from "url";
 import { startAgent } from "../core/agent.js";
 import dotenv from "dotenv";
 
-dotenv.config();
+const result = dotenv.config({
+  path: path.resolve(process.cwd(), ".env")
+});
 
-console.log("DOTENV:", dotenv.config());
-console.log("API:", process.env.API_BASE_URL);
+console.log("cwd:", process.cwd());
+console.log("dotenv result:", result);
+console.log("API_BASE_URL:", process.env.API_BASE_URL);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

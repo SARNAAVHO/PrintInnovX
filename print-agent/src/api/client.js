@@ -1,15 +1,31 @@
 import fetch from "node-fetch";
+import fs from "fs";
+import path from "path";
 
-const API_BASE = process.env.API_BASE_URL || "http://localhost:4000";
+function getConfig() {
+  const configPath = path.resolve("config/agent.json");
 
-export async function apiRequest(path, method, token, body) {
-  const res = await fetch(`${API_BASE}${path}`, {
+  if (!fs.existsSync(configPath)) {
+    throw new Error("Agent configuration not found.");
+  }
+
+  return JSON.parse(
+    fs.readFileSync(configPath, "utf8")
+  );
+}
+
+export async function apiRequest(pathname, method, token, body) {
+  const { backendUrl } = getConfig();
+
+  const res = await fetch(`${backendUrl}${pathname}`, {
     method,
     headers: {
       "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : undefined,
+      ...(token && {
+        Authorization: `Bearer ${token}`
+      })
     },
-    body: body ? JSON.stringify(body) : undefined,
+    body: body ? JSON.stringify(body) : undefined
   });
 
   if (!res.ok) {
@@ -21,5 +37,9 @@ export async function apiRequest(path, method, token, body) {
 }
 
 export function sendHeartbeat(token) {
-  return apiRequest("/api/agent/heartbeat", "POST", token);
+  return apiRequest(
+    "/api/agent/heartbeat",
+    "POST",
+    token
+  );
 }

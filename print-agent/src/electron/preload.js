@@ -8,7 +8,7 @@ dotenv.config();
 const CONFIG_PATH = path.resolve("config/agent.json");
 
 contextBridge.exposeInMainWorld("config", {
-  API_BASE_URL: process.env.API_BASE_URL
+  API_BASE_URL: process.env.API_BASE_URL || "https://printinnovx-production.up.railway.app"
 });
 
 contextBridge.exposeInMainWorld("agentAPI", {
